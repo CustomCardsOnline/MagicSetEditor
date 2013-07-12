@@ -672,7 +672,7 @@ void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_s
 	// Destroy the clientDC before reshowing the caret, prevent flicker on MSW
 	{
 		// Move selection
-		shared_ptr<RotatedDC> dcP = editor().overdrawDC();
+		boost::shared_ptr<RotatedDC> dcP = editor().overdrawDC();
 		RotatedDC& dc = *dcP;
 		Rotater r(dc, getRotation());
 		if (nativeLook()) {

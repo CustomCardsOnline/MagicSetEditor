@@ -128,14 +128,14 @@ class CardViewer::OverdrawDC : private OverdrawDC_aux, public RotatedDC {
 	{}
 };
 
-shared_ptr<RotatedDC> CardViewer::overdrawDC() {
+boost::shared_ptr<RotatedDC> CardViewer::overdrawDC() {
 	#ifdef _DEBUG
 		// don't call from onPaint
 		if (inOnPaint()) {
 			wxTrap();
 		}
 	#endif
-	return shared_ptr<RotatedDC>(new OverdrawDC(this));
+	return boost::shared_ptr<RotatedDC>(new OverdrawDC(this));
 }
 
 Rotation CardViewer::getRotation() const {

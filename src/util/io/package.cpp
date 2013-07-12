@@ -220,7 +220,7 @@ InputStreamP Package::openIn(const String& file) {
 	} else if (wxFileExists(filename) && it != files.end() && it->second.zipEntry) {
 		// a file in a zip archive
 		// somebody in wx thought seeking was no longer needed, it now only works with the 'compatability constructor'
-		stream = shared(new wxZipInputStream(filename, it->second.zipEntry->GetInternalName()));
+		stream = shared(new wxZipInputStream(wxString(filename), it->second.zipEntry->GetInternalName()));
 		//stream = static_pointer_cast<wxZipInputStream>(
 		//			shared(new ZipFileInputStream(filename, it->second.zipEntry)));
 	} else {
@@ -312,7 +312,7 @@ InputStreamP Package::openAbsoluteFile(const String& name) {
 	size_t pos = name.find_first_of(_('\1'));
 	if (pos == String::npos) {
 		// temp or dir file
-		shared_ptr<wxFileInputStream> f = shared(new wxFileInputStream(name));
+		boost::shared_ptr<wxFileInputStream> f = shared(new wxFileInputStream(name));
 		if (!f->IsOk()) throw FileNotFoundError(_("<unknown>"), name);
 		return f;
 	} else {

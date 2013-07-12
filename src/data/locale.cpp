@@ -89,7 +89,7 @@ String warn_and_identity(const String& key) {
 	queue_message(MESSAGE_WARNING, _("Missing key in locale: ") + key);
 	return key;
 }
-String identity(const String& key) {
+String string_identity(const String& key) {
 	return key;
 }
 

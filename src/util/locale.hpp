@@ -44,7 +44,7 @@ typedef String (*DefaultLocaleFun)(const String&);
 /// Return the input and issue a warning
 String warn_and_identity(const String&);
 /// Return the input and don't issue a warning
-String identity(const String&);
+String string_identity(const String&);
 
 /// Translate 'key' in the category 'cat' using the current locale
 String tr(LocaleCategory cat, const String& key, DefaultLocaleFun def = warn_and_identity);

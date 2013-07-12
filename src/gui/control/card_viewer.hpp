@@ -28,7 +28,7 @@ class CardViewer : public wxControl, public DataViewer {
 	
 	/// Get a dc to draw on the card outside onPaint	
 	/** May NOT be called while in onPaint/draw */
-	shared_ptr<RotatedDC> overdrawDC();
+	boost::shared_ptr<RotatedDC> overdrawDC();
 	
 	/// Invalidate and redraw the entire viewer
 	void redraw();

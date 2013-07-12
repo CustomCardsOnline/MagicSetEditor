@@ -34,19 +34,19 @@ else(HUNSPELL_LIBRARIES AND HUNSPELL_INCLUDE_DIRS)
   endif()
 
   if(HUNSPELL_FIND_STYLE STREQUAL "win32")
-    find_path(HUNSPELL_ROOT_DIR
+    find_path(HUNSPELL_INCLUDE_DIRS
       NAMES
-        include/hunspell.hxx
+        hunspell/hunspell.hxx
       PATHS
         ENV HUNSPELL_ROOT_DIR
         C:/
         D:/
         ENV ProgramFiles
       PATH_SUFFIXES
-        hunspell-1.3.2
+        hunspell-1.3.2/include
     )
 
-    find_library(HUNSPELL_LIBRARY
+    find_library(HUNSPELL_LIBRARIES
       NAMES
         libhunspell
       PATHS

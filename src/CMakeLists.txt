@@ -8,13 +8,12 @@ find_package(Boost REQUIRED COMPONENTS regex)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 find_package(wxWidgets REQUIRED COMPONENTS core base)
-add_definitions(${wxWidgets_DEFINITIONS})
 include_directories(SYSTEM ${wxWidgets_INCLUDE_DIRS})
-
-add_definitions(-DWXWIN_COMPATIBILITY_2_6=1)
 
 find_package(HUNSPELL REQUIRED)
 include_directories(SYSTEM ${HUNSPELL_INCLUDE_DIRS})
+
+message("Hunspell: " ${HUNSPELL_INCLUDE_DIRS})
 
 if(WIN32)
 	add_definitions(-D__WXMSW__)

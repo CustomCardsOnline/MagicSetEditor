@@ -160,7 +160,7 @@ void KeywordParam::eat_separator_before(String& text) {
 void KeywordParam::eat_separator_after(const String& text, size_t& i) {
 	if (separator_after_eat.empty()) return;
 	Regex::Results result;
-	if (separator_after_eat.matches(result, text.begin() + i, text.end())) {
+	if (separator_after_eat.matches(result, text.c_str() + i, text.c_str() + text.length())) {
 		// advance past the separator
 		assert(result.position() == 0);
 		i += result.length();
@@ -616,7 +616,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 			// strip separator_after
 			if (!kwp.separator_after_re.empty() && kwp.separator_after_re.matches(sep_match, param)) {
 				size_t sep_start = sep_match.position();
-				assert(sep_match[0].second == param.end()); // should only match at end of param
+				assert(sep_match[0].second == param.c_str() + param.length()); // should only match at end of param
 				separator_after.assign(param, sep_start, String::npos);
 				param.resize(sep_start);
 				// strip from tagged version

@@ -22,7 +22,7 @@ class Packaged;
 // ----------------------------------------------------------------------------- : Reader
 
 typedef wxInputStream  InputStream;
-typedef shared_ptr<wxInputStream> InputStreamP;
+typedef boost::shared_ptr<wxInputStream> InputStreamP;
 
 // Overload to perform extra stuff after reading
 template <typename T> inline void after_reading(T&, Version) {}

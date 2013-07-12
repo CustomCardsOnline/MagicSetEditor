@@ -280,7 +280,7 @@ void DropDownList::redrawArrowOnParent() {
 		ValueEditor* e = viewer->getEditor();
 		if (e && viewer->viewer.nativeLook()) {
 			CardEditor& editor = static_cast<CardEditor&>(viewer->viewer);
-			shared_ptr<RotatedDC> dcP = editor.overdrawDC();
+			boost::shared_ptr<RotatedDC> dcP = editor.overdrawDC();
 			RotatedDC& dc = *dcP;
 			Rotater r(dc, viewer->getRotation());
 			draw_drop_down_arrow(&editor, dc.getDC(), dc.trRectToBB(dc.getInternalRect().grow(1)), IsShown());

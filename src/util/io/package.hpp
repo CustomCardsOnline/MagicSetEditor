@@ -30,7 +30,7 @@ DECLARE_DYNAMIC_ARG(Package*, writing_package);
 DECLARE_DYNAMIC_ARG(Package*, clipboard_package);
 
 
-typedef shared_ptr<wxOutputStream> OutputStreamP;
+typedef boost::shared_ptr<wxOutputStream> OutputStreamP;
 
 
 // ----------------------------------------------------------------------------- : FileName

@@ -146,7 +146,7 @@ void KeywordReminderTextValue::highlight(const String& code, const vector<Script
 			}
 			++pos;
 		} else if (c == _('\\') && in_string && pos + 1 < code.size()) {
-			new_value += c + code.GetChar(pos + 1); // escape code
+			new_value += String(c) + code.GetChar(pos + 1); // escape code
 			pos += 2;
 		} else if (is_substr(code, pos, _("if ")) && !in_string) {
 			new_value += _("<code-kw>if</code-kw> ");

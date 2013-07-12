@@ -45,7 +45,7 @@ using boost::dynamic_pointer_cast;
 /// Declares the type TypeP as a shared_ptr<Type>
 #define DECLARE_SHARED_POINTER_TYPE(Type)	\
 	class Type;								\
-	typedef shared_ptr<Type> Type##P;
+	typedef boost::shared_ptr<Type> Type##P;
 
 // ----------------------------------------------------------------------------- : Creating
 
@@ -54,8 +54,8 @@ using boost::dynamic_pointer_cast;
 	*    return shared(new T(stuff)));
 	*/
 template <typename T>
-inline shared_ptr<T> shared(T* ptr) {
-	return shared_ptr<T>(ptr);
+inline boost::shared_ptr<T> shared(T* ptr) {
+	return boost::shared_ptr<T>(ptr);
 }
 
 // ----------------------------------------------------------------------------- : Intrusive pointers

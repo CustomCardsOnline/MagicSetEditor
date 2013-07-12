@@ -63,7 +63,7 @@ class SymbolViewer : public SymbolView {
 	
 	
   private:
-	typedef shared_ptr<wxMemoryDC> MemoryDCP;
+	typedef boost::shared_ptr<wxMemoryDC> MemoryDCP;
 	/// Inside a reflection?
 	int in_symmetry;
 	
