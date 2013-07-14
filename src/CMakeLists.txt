@@ -4,11 +4,11 @@ project(MSE)
 
 set(Boost_USE_STATIC_LIBS   ON)
 set(Boost_USE_MULTITHREADED ON)
-find_package(Boost REQUIRED COMPONENTS regex)
+find_package(Boost REQUIRED COMPONENTS regex system thread date_time chrono)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
-find_package(wxWidgets REQUIRED COMPONENTS core base)
-include_directories(SYSTEM ${wxWidgets_INCLUDE_DIRS})
+find_package(wxWidgets REQUIRED COMPONENTS core base media html net)
+include(${wxWidgets_USE_FILE})
 
 find_package(HUNSPELL REQUIRED)
 include_directories(SYSTEM ${HUNSPELL_INCLUDE_DIRS})
@@ -17,6 +17,7 @@ message("Hunspell: " ${HUNSPELL_INCLUDE_DIRS})
 
 if(WIN32)
 	add_definitions(-D__WXMSW__)
+	set(RESOURCE_FILES resource/msw/mse.rc)
 endif(WIN32)
 
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR})
@@ -423,7 +424,6 @@ set(FILES
 	code_template.cpp
 	code_template.hpp
 	main.cpp)
-source_group('' FILES ${FILES})
 
 add_executable(mse
 	${CLI_FILES}
@@ -447,6 +447,16 @@ add_executable(mse
 	${UTIL_IO_FILES}
 	${UTIL_VCS_FILES}
 	${UTIL_FILES}
-	${FILES})
+	${FILES}
+	${RESOURCE_FILES})
+	
+if(WIN32)
+	set_property(TARGET mse PROPERTY WIN32_EXECUTABLE ON)
+	
+endif(WIN32)
 
-target_link_libraries(mse ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${HUNSPELL_LIBRARIES})
+target_link_libraries(mse ${Boost_LIBRARIES})
+target_link_libraries(mse ${wxWidgets_LIBRARIES})
+target_link_libraries(mse ${HUNSPELL_LIBRARIES})
+
+message("${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${HUNSPELL_LIBRARIES}")

@@ -22,13 +22,13 @@ DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 #if defined(_MSC_VER) && defined(_DEBUG) && defined(_CRT_WIDE)
 	void msvc_assert(const wchar_t* msg, const wchar_t* expr, const wchar_t* file, unsigned line) {
 		if (IsDebuggerPresent()) {
-			wchar_t buffer[1024];
+			CHAR buffer[1024];
 			if (msg) {
-				wsprintf(buffer, L"Assertion failed: %s: %s, file %s, line %d\n", msg, expr, file, line);
+				wsprintf(buffer, (LPSTR)L"Assertion failed: %s: %s, file %s, line %d\n", msg, expr, file, line);
 			} else {
-				wsprintf(buffer, L"Assertion failed: %s, file %s, line %d\n", expr, file, line);
+				wsprintf(buffer, (LPSTR)L"Assertion failed: %s, file %s, line %d\n", expr, file, line);
 			}
-			OutputDebugStringW(buffer);
+			OutputDebugString(buffer);
 			__debugbreak();
 		} else {
 			_wassert(expr, file, line);

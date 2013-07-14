@@ -34,7 +34,7 @@ else(HUNSPELL_LIBRARIES AND HUNSPELL_INCLUDE_DIRS)
   endif()
 
   if(HUNSPELL_FIND_STYLE STREQUAL "win32")
-    find_path(HUNSPELL_INCLUDE_DIRS
+    find_path(HUNSPELL_INCLUDE_DIR
       NAMES
         hunspell/hunspell.hxx
       PATHS
@@ -43,10 +43,10 @@ else(HUNSPELL_LIBRARIES AND HUNSPELL_INCLUDE_DIRS)
         D:/
         ENV ProgramFiles
       PATH_SUFFIXES
-        hunspell-1.3.2/include
+        hunspell-1.3.2/src
     )
 
-    find_library(HUNSPELL_LIBRARIES
+    find_library(HUNSPELL_LIBRARY
       NAMES
         libhunspell
       PATHS
@@ -81,12 +81,8 @@ else(HUNSPELL_LIBRARIES AND HUNSPELL_INCLUDE_DIRS)
     )
   endif()
 
-  set(HUNSPELL_INCLUDE_DIRS
-    ${HUNSPELL_INCLUDE_DIR}
-  )
-  set(HUNSPELL_LIBRARIES
-    ${HUNSPELL_LIBRARY}
-  )
+  set(HUNSPELL_INCLUDE_DIRS ${HUNSPELL_INCLUDE_DIR})
+  set(HUNSPELL_LIBRARIES ${HUNSPELL_LIBRARY})
 
   if (HUNSPELL_INCLUDE_DIRS AND HUNSPELL_LIBRARIES)
      set(HUNSPELL_FOUND TRUE)
@@ -94,6 +90,7 @@ else(HUNSPELL_LIBRARIES AND HUNSPELL_INCLUDE_DIRS)
 
   if (HUNSPELL_FOUND)
     if (NOT hunspell_FIND_QUIETLY)
+	    message(STATUS "Found Hunspell: ${HUNSPELL_INCLUDE_DIRS}")
       message(STATUS "Found Hunspell: ${HUNSPELL_LIBRARIES}")
     endif (NOT hunspell_FIND_QUIETLY)
   else (HUNSPELL_FOUND)
