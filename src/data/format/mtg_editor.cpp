@@ -223,7 +223,8 @@ String MtgEditorFileFormat::filter1(const String& str) {
 		after  = str.substr(pos + 1);
 	}
 	// filter
-	FOR_EACH(c, after) {
+	for (int i = 0; i < after.length(); i++) {
+		Char c = after[i];
 		if (isAlnum(c)) ret += c;
 		else            ret += _('_');
 	}
@@ -232,7 +233,8 @@ String MtgEditorFileFormat::filter1(const String& str) {
 
 String MtgEditorFileFormat::filter2(const String& str) {
 	String ret;
-	FOR_EACH_CONST(c, str) {
+	for (int i = 0; i < str.length(); i++) {
+		Char c = str[i];
 		if (isAlnum(c))                  ret += c;
 		else if (c==_(' ') || c==_('-')) ret += _('_');
 	}

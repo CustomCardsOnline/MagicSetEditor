@@ -185,7 +185,8 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(LocaleValidator) {
 int string_format_args(const String& str) {
 	int count = 0;
 	bool in_percent = false;
-	FOR_EACH_CONST(c, str) {
+	for (int i = 0; i < str.length(); i++) {
+		Char c = str[i];
 		if (in_percent) {
 			if (c == _('s')) {
 				count++;
