@@ -83,7 +83,7 @@
 	/** Suppors both boost::regex and wxRegEx.
 	 *  Has an interface like boost::regex.
 	 */
-	class Regex 
+	class Regex {
 	  public:
 		// Interface for compatability with boost::regex
 		class Results {
