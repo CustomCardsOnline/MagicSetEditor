@@ -92,6 +92,10 @@ class IntrusivePtrVirtualBase;
 template <typename T> void intrusive_ptr_add_ref(IntrusivePtrBase<T>*);
 template <typename T> void intrusive_ptr_release(IntrusivePtrBase<T>*);
 template <typename T> void intrusive_ptr_release(IntrusivePtrVirtualBase*);
+
+void intrusive_ptr_release(void *) {
+	
+}
 /// Base class for objects wishing to use intrusive_ptrs.
 /** There is no implicit virtual destructor, objects are destructed as type T
 *   Usage:
