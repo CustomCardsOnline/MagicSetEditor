@@ -88,8 +88,10 @@ inline intrusive_ptr<T> intrusive_from_existing(T* ptr) {
 // ----------------------------------------------------------------------------- : Intrusive pointer base
 
 template <typename T> class IntrusivePtrBase;
+class IntrusivePtrVirtualBase;
 template <typename T> void intrusive_ptr_add_ref(IntrusivePtrBase<T>*);
 template <typename T> void intrusive_ptr_release(IntrusivePtrBase<T>*);
+template <typename T> void intrusive_ptr_release(IntrusivePtrVirtualBase*);
 /// Base class for objects wishing to use intrusive_ptrs.
 /** There is no implicit virtual destructor, objects are destructed as type T
 *   Usage:
@@ -112,8 +114,9 @@ template <typename T> class IntrusivePtrBase {
 	}
   private:
 	AtomicInt ref_count;
-	friend void intrusive_ptr_add_ref <> (IntrusivePtrBase*);
-	friend void intrusive_ptr_release <> (IntrusivePtrBase*);
+	template <typename W> friend void intrusive_ptr_add_ref (IntrusivePtrBase<W>*);
+	template <typename W> friend void intrusive_ptr_release (IntrusivePtrBase<W>*);
+	friend void intrusive_ptr_release (IntrusivePtrVirtualBase*);
 	template <typename U> friend intrusive_ptr<U> intrusive(U*);
 	template <typename U> friend intrusive_ptr<U> intrusive_from_existing(U*);
 };
@@ -127,6 +130,7 @@ template <typename T> void intrusive_ptr_release(IntrusivePtrBase<T>* p) {
 		static_cast<T*>(p)->destroy();
 	}
 }
+
 // ----------------------------------------------------------------------------- : Intrusive pointer base : virtual
 
 /// IntrusivePtrBase with a virtual destructor
@@ -135,6 +139,11 @@ class IntrusivePtrVirtualBase : public IntrusivePtrBase<IntrusivePtrVirtualBase>
 	virtual ~IntrusivePtrVirtualBase() {}
 };
 
+void intrusive_ptr_release(IntrusivePtrVirtualBase* p) {
+	if (--p->ref_count == 0) {
+		p->destroy();
+	}
+}
 // ----------------------------------------------------------------------------- : Intrusive pointer base : with delete
 
 /// Base class for objects wishing to use intrusive_ptrs, using a manual delete function

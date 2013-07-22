@@ -22,7 +22,7 @@
  *
  *            (times are avarage over all calls, in ms)
  */
-#define USE_BOOST_REGEX 1
+#define USE_BOOST_REGEX 0
 
 #if USE_BOOST_REGEX
 	#include <boost/regex.hpp>
@@ -49,7 +49,10 @@
 				std::basic_string<Char> fmt(format.begin(),format.end());
 				String output;
 				boost::match_results<String::const_iterator>::format(
-					insert_iterator<String>(output, output.end()), fmt, boost::format_sed);
+					insert_iterator<String>(output, output.end()),
+					fmt,
+					boost::format_sed
+				);
 				return output;
 			}
 		};
@@ -123,10 +126,10 @@
 				regex->ReplaceFirst(&inside, format);
 				return inside;
 			}
-		  private:
-			wxRegEx*    regex;
+			const wxRegEx* regex;
 			const Char* begin;
 			friend class ScriptRegex;
+		  private:
 		};
 		
 		inline Regex() {}
@@ -138,7 +141,7 @@
 		}
 		inline bool matches(Results& results, const String& str) const {
 			results.regex = &regex;
-			results.begin = str.begin();
+			//results.begin = str.begin();
 			return regex.Matches(str);
 		}
 		inline bool matches(Results& results, const Char* begin, const Char* end) const {
