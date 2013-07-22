@@ -81,16 +81,16 @@ int main(int argc, char** argv) {
 		TCHAR* my_command_line = command_line;
 		command_line = new TCHAR[_tcsclen(command_line) + 10];
 		_tcscpy(command_line, my_command_line);
-		_tcscat(command_line, _T(" --color"));
+		_tcscat(command_line, " --color");
 	}
 	
 	// application name
 	TCHAR app_path[2048];
 	GetModuleFileName(NULL/*current process*/, app_path, sizeof(app_path)/sizeof(TCHAR));
 	size_t app_path_length = _tcsclen(app_path);
-	if (app_path_length > 4 && _tcsicmp(app_path + app_path_length - 4, _T(".com")) == 0) {
+	if (app_path_length > 4 && _tcsicmp(app_path + app_path_length - 4, ".com") == 0) {
 		// replace ".com" with ".exe"
-		_tcscpy(app_path + app_path_length - 4, _T(".exe"));
+		_tcscpy(app_path + app_path_length - 4, ".exe");
 	} else {
 		// not a .com file, error message
 		fprintf(stderr, "This executable should be named <something>.com\n");
