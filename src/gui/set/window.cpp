@@ -399,7 +399,7 @@ void SetWindow::onClose(wxCloseEvent& ev) {
 int ask_save_changes_impl(wxWindow* parent, String const& message, String const& title) {
 	#if defined(__WXMSW__) && defined(UNICODE) && defined(TD_WARNING_ICON) // the last one is a hack to test for precense of TASKDIALOG stuff
 		// Do we have the TaskDialogIndirect function?
-		HMODULE h = ::LoadLibrary(L"comctl32.dll");
+		HMODULE h = ::LoadLibrary(_T("comctl32.dll"));
 		if (!h) return 0;
 		typedef HRESULT (WINAPI *type_TaskDialogIndirect)(const TASKDIALOGCONFIG *pTaskConfig, int *pnButton, int *pnRadioButton, BOOL *pfVerificationFlagChecked);
 		type_TaskDialogIndirect func_TaskDialogIndirect = !h ? nullptr : (type_TaskDialogIndirect)::GetProcAddress(h, "TaskDialogIndirect" );
@@ -407,7 +407,7 @@ int ask_save_changes_impl(wxWindow* parent, String const& message, String const&
 		
 		int nButtonPressed                  = 0;
 		TASKDIALOGCONFIG config             = {0};
-		const TASKDIALOG_BUTTON buttons[]   = { { IDYES, L"&Save" }, { IDNO, L"Do&n't Save" } };
+		const TASKDIALOG_BUTTON buttons[]   = { { IDYES, _T("&Save") }, { IDNO, _T("Do&n't Save") } };
 		config.cbSize                       = sizeof(config);
 		config.dwCommonButtons              = TDCBF_CANCEL_BUTTON;
 		config.pszWindowTitle               = title.c_str();

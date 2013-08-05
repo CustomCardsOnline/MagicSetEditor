@@ -225,7 +225,7 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 		// the control should show what the list is still filtered by
 		filter->setFilter(filter_value);
 	}
-	wxLogDebug((const wxChar *)L"%p -> %p", filter, tb);
+	wxLogDebug((const wxChar *)_T("%p -> %p"), filter, tb);
 	tb->AddControl(filter);
 	tb->Realize();
 	// Menus

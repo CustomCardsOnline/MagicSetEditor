@@ -367,7 +367,7 @@ void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool sele
 			r.right = rect.x + rect.width;
 			r.bottom = rect.y + rect.height;
 			if (hTheme) {
-				//themeEngine->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
+				//themeEngine->SetWindowTheme((HWND)win->GetHWND(), _T("Explorer"), NULL);
 				themeEngine->DrawThemeBackground(
 					(HTHEME)hTheme,
 					(HDC)dc.GetHDC(),
