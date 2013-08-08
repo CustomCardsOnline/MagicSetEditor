@@ -169,7 +169,22 @@ Image load_resource_image(const String& name) {
         if (!resource.Ok()) handle_error(InternalError(String(_("Cannot find resource file at ")) + path + name + _(" or ") + file));
 		return resource;
 	#else
-		#error Handling of resource loading needs to be declared.
+		static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/");
+		String file = path + name;
+		wxImage resource;
+		if (wxFileExists(file + _(".png"))) resource.LoadFile(file + _(".png"));
+		else if (wxFileExists(file + _(".bmp"))) resource.LoadFile(file + _(".bmp"));
+		else if (wxFileExists(file + _(".ico"))) resource.LoadFile(file + _(".ico"));
+		else if (wxFileExists(file + _(".cur"))) resource.LoadFile(file + _(".cur"));
+		if (resource.Ok()) return resource;
+        static String local_path = wxStandardPaths::Get().GetUserDataDir() + _("/resource/");
+        file = local_path + name;
+        if (wxFileExists(file + _(".png"))) resource.LoadFile(file + _(".png"));
+        else if (wxFileExists(file + _(".bmp"))) resource.LoadFile(file + _(".bmp"));
+        else if (wxFileExists(file + _(".ico"))) resource.LoadFile(file + _(".ico"));
+        else if (wxFileExists(file + _(".cur"))) resource.LoadFile(file + _(".cur"));
+        if (!resource.Ok()) handle_error(InternalError(String(_("Cannot find resource file at ")) + path + name + _(" or ") + file));
+		return resource;
 	#endif
 }
 

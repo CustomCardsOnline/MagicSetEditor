@@ -387,7 +387,10 @@ SCRIPT_FUNCTION(count_chosen) {
 			SCRIPT_RETURN(0);
 		} else {
 			int count = 1;
-			FOR_EACH(c, input) if (c == _(',')) ++count;
+			for (int i = 0; i < input.length(); i++) {
+				Char c = input[i];
+				if (c == _(',')) ++count;
+			}
 			SCRIPT_RETURN(count);
 		}
 	}

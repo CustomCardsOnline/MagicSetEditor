@@ -26,13 +26,20 @@ class ScriptRegex : public ScriptValue, public Regex {
 	ScriptRegex(const String& code) {
 		assign(code);
 	}
+
+	using Regex::matches;
 	
 	/// Match only if in_context also matches
 	bool matches(Results& results, const String& str, String::const_iterator begin, const ScriptRegexP& in_context) {
+//	bool matches(Results& results, String& str, wchar_t *begin, const ScriptRegexP& in_context) {
 		if (!in_context) {
-			return matches(results, begin, str.end());
+			std::wstring *wstring = new std::wstring(begin, str.end());
+			bool ret = matches(results, *wstring);
+			delete wstring;
+			return ret;
 		} else {
-			while (matches(results, begin, str.end())) {
+			bool cont = matches(results, begin, str.end());
+			while (cont) { 
 				Results::const_reference match = results[0];
 				String context_str(str.begin(), match.first); // before
 				context_str += _("<match>");
@@ -41,11 +48,11 @@ class ScriptRegex : public ScriptValue, public Regex {
 					return true; // the context matches, done
 				}
 				begin = match.second; // skip
+				cont = matches(results, begin, str.end());
 			}
 			return false;
 		}
 	}
-	using Regex::matches;
 };
 
 ScriptRegexP regex_from_script(const ScriptValueP& value) {

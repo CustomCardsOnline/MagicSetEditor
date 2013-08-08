@@ -160,7 +160,7 @@ void KeywordParam::eat_separator_before(String& text) {
 void KeywordParam::eat_separator_after(const String& text, size_t& i) {
 	if (separator_after_eat.empty()) return;
 	Regex::Results result;
-	if (separator_after_eat.matches(result, text.c_str() + i, text.c_str() + text.length())) {
+	if (separator_after_eat.matches(result, text, i, text.length())) {
 		// advance past the separator
 		assert(result.position() == 0);
 		i += result.length();

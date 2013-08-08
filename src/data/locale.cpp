@@ -69,17 +69,17 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(SubLocale) {
 
 // ----------------------------------------------------------------------------- : Wildcards
 
-bool match_wildcard(const String& wildcard, const String& name) {
+bool match_wildcard(const String& wildcard, const wstring name) {
 	return Regex(replace_all(replace_all(wildcard, _("."), _("\\.")), _("*"), _(".*"))).matches(name);
 }
 
-SubLocaleP find_wildcard(map<String,SubLocaleP>& items, const String& name) {
+SubLocaleP find_wildcard(map<String,SubLocaleP>& items, const wstring& name) {
 	FOR_EACH_CONST(i, items) {
 		if (i.second && match_wildcard(i.first, name)) return i.second;
 	}
 	return intrusive(new SubLocale()); // so we don't search again
 }
-SubLocaleP find_wildcard_and_set(map<String,SubLocaleP>& items, const String& name) {
+SubLocaleP find_wildcard_and_set(map<String,SubLocaleP>& items, const wstring& name) {
 	return items[name] = find_wildcard(items, name);
 }
 
@@ -121,7 +121,9 @@ String tr(const Package& pkg, const String& key, DefaultLocaleFun def) {
 	if (!the_locale) return def(key);
 	SubLocaleP loc = the_locale->package_translations[pkg.relativeFilename()];
 	if (!loc) {
-		loc = find_wildcard_and_set(the_locale->package_translations, pkg.relativeFilename());
+		wstring *filename = new wstring(pkg.relativeFilename());
+		loc = find_wildcard_and_set(the_locale->package_translations, *filename);
+		delete filename;
 	}
 	return loc->tr(key, def);
 }
@@ -130,7 +132,9 @@ String tr(const Package& pkg, const String& subcat, const String& key, DefaultLo
 	if (!the_locale) return def(key);
 	SubLocaleP loc = the_locale->package_translations[pkg.relativeFilename()];
 	if (!loc) {
-		loc = find_wildcard_and_set(the_locale->package_translations, pkg.relativeFilename());
+		wstring *filename = new wstring(pkg.relativeFilename());
+		loc = find_wildcard_and_set(the_locale->package_translations, *filename);
+		delete filename;
 	}
 	return loc->tr(subcat, key, def);
 }

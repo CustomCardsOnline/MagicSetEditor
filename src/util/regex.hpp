@@ -127,7 +127,8 @@
 				return inside;
 			}
 			const wxRegEx* regex;
-			const Char* begin;
+			const wchar_t *begin;
+			// const wxString::const_iterator begin;
 			friend class ScriptRegex;
 		  private:
 		};
@@ -136,19 +137,49 @@
 		inline Regex(const String& code) { assign(code); }
 		
 		void assign(const String& code);
+
+		/*
 		inline bool matches(const String& str) const {
 			return regex.Matches(str);
 		}
-		inline bool matches(Results& results, const String& str) const {
-			results.regex = &regex;
-			//results.begin = str.begin();
+		*/
+		inline bool matches(const wstring& str) const {
 			return regex.Matches(str);
 		}
-		inline bool matches(Results& results, const Char* begin, const Char* end) const {
+		inline bool matches(Results& results, const String& str, int start, int end) {
+			results.regex = &regex;
+			std::wstring widestr = std::wstring(str.begin(), str.end());
+			const wchar_t *tmp = widestr.c_str();
+			results.begin = &(tmp[start]);
+			return regex.Matches(tmp, start, end - start);
+		}
+		inline bool matches(Results& results, const String& str) const {
+			results.regex = &regex;
+			results.begin = str.c_str();
+			return regex.Matches(str);
+		}
+		inline bool matches(Results& results, const wstring& str) const {
+			results.regex = &regex;
+			results.begin = str.c_str();
+			return regex.Matches(str);
+		}
+		inline bool matches(Results& results, const wchar_t* begin, const wchar_t* end) const {
 			results.regex = &regex;
 			results.begin = begin;
 			return regex.Matches(begin, 0, end - begin);
 		}
+		/*
+		inline bool matches(Results& results, const wchar_t* begin, const wxUniCharRef* end) const {
+			results.regex = &regex;
+			//results.begin = begin;
+			return regex.Matches(begin, 0, end - begin);
+		}
+		inline bool matches(Results& results, const String::const_iterator& begin, const String::const_iterator& end) const {
+			results.regex = &regex;
+			//results.begin = &((wchar_t)(*begin));
+			return regex.Matches(begin, 0, end - begin);
+		}
+		*/
 		inline void replace_all(String* input, const String& format) {
 			regex.Replace(input, format);
 		}
