@@ -30,8 +30,8 @@ class ScriptRegex : public ScriptValue, public Regex {
 	using Regex::matches;
 	
 	/// Match only if in_context also matches
-	bool matches(Results& results, const String& str, String::const_iterator begin, const ScriptRegexP& in_context) {
-//	bool matches(Results& results, String& str, wchar_t *begin, const ScriptRegexP& in_context) {
+//	bool matches(Results& results, const String& str, String::const_iterator begin, const ScriptRegexP& in_context) {
+	bool matches(Results& results, String& str, wchar_t *begin, const ScriptRegexP& in_context) {
 		if (!in_context) {
 			std::wstring *wstring = new std::wstring(begin, str.end());
 			bool ret = matches(results, *wstring);
@@ -204,23 +204,23 @@ SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(break_text) {
 // ----------------------------------------------------------------------------- : Rules : regex split
 
 SCRIPT_FUNCTION_WITH_SIMPLIFY(split_text) {
-	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(wxString, input);
 	SCRIPT_PARAM_C(ScriptRegexP, match);
 	SCRIPT_PARAM_DEFAULT(bool, include_empty, true);
 	ScriptCustomCollectionP ret(new ScriptCustomCollection);
 	// find all matches
-	String::const_iterator start = input.begin();
+	wxString::const_iterator start = input.begin();
 	ScriptRegex::Results results;
 	while (match->matches(results, start, input.end())) {
 		// match, append the part before it to the result
 		ScriptRegex::Results::const_reference pos = results[0];
-		if (include_empty || pos.first != start) {
-			ret->value.push_back(to_script( String(start,pos.first) ));
+		if (include_empty) { // || pos.first != start) {
+			ret->value.push_back(to_script( wxString(start,pos.first).ToStdWstring() ));
 		}
 		start = pos.second;
 	}
 	if (include_empty || start != input.end()) {
-		ret->value.push_back(to_script( String(start,input.end()) ));
+		ret->value.push_back(to_script( wxString(start,input.end()).ToStdWstring() ));
 	}
 	return ret;
 }

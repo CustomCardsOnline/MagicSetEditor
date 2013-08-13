@@ -335,7 +335,7 @@ class HistoryTextCtrl : public wxTextCtrl {
 	{}
 	
 	String get_command_and_clear() {
-		String command = GetValue();
+		String command = GetValue().ToStdWstring();
 		history.push_back(command);
 		history_pos = (int)history.size();
 		SetValue(_(""));
@@ -363,7 +363,7 @@ class HistoryTextCtrl : public wxTextCtrl {
 	// browse history for strings that share the part before the cursor with the current value in the control
 	bool browse_history(int dir) {
 		int caret = GetInsertionPoint();
-		String to_match = GetValue().substr(0, caret);
+		String to_match = GetValue().substr(0, caret).ToStdWstring();
 		while (history_pos+dir >= 0 && history_pos+dir < (int)history.size()) {
 			history_pos += dir;
 			if (starts_with(history[history_pos],to_match)) {

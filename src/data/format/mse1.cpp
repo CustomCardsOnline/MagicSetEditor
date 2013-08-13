@@ -51,17 +51,17 @@ SetP MSE1FileFormat::importSet(const String& filename) {
 	SetP set(new Set(Game::byName(_("magic"))));
 	
 	// file version check
-	String format = file.ReadLine();
+	String format = file.ReadLine().ToStdWstring();
 	if (format.substr(0,8) != _("MTG Set8")) {
 		throw ParseError(_("Expected MSE format version 8\nTo convert files made with older versions of Magic Set Editor:\n  1. Download the latest version 1 from http:://magicsetedtitor.sourceforge.net\n  2. Open the set, then save the set\n  3. Try to open them again in this program."));
 	}
 	// read general info
-	set->value(_("title"))     = to_script(file.ReadLine());
-	set->value(_("artist"))    = to_script(file.ReadLine());
-	set->value(_("copyright")) = to_script(file.ReadLine());
+	set->value(_("title"))     = to_script(file.ReadLine().ToStdWstring());
+	set->value(_("artist"))    = to_script(file.ReadLine().ToStdWstring());
+	set->value(_("copyright")) = to_script(file.ReadLine().ToStdWstring());
 	file.ReadLine(); // border color, ignored
-	String stylesheet = file.ReadLine();
-	set->apprentice_code = file.ReadLine(); // apprentice prefix
+	String stylesheet = file.ReadLine().ToStdWstring();
+	set->apprentice_code = file.ReadLine().ToStdWstring(); // apprentice prefix
 	file.ReadLine(); // 'formatN'?, not even used by MSE1 :S, ignored
 	file.ReadLine(); // 'formatS'?, same, ignored
 	file.ReadLine(); // symbol filename, ignored
@@ -108,9 +108,9 @@ void read_mse1_card(Set& set, wxFileInputStream& f, wxTextInputStream& file) {
 	CardP card(new Card(*set.game));
 	while (!f.Eof()) {
 		// read a line
-		String line = file.ReadLine();
+		String line = file.ReadLine().ToStdWstring();
 		if (line.empty()) continue;
-		Char type = line.GetChar(0);
+		Char type = line.c_str()[0];
 		line = line.substr(1);
 		// interpret this line
 		switch (type) {

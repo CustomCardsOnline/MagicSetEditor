@@ -114,7 +114,7 @@ void KeywordReminderTextValue::highlight(const String& code, const vector<Script
 			}
 		}
 		// process a character
-		Char c = code.GetChar(pos);
+		wchar_t c = code.c_str()[pos];
 		if (c == _('<')) {
 			new_value += _('\1'); // escape
 			++pos;
@@ -146,7 +146,7 @@ void KeywordReminderTextValue::highlight(const String& code, const vector<Script
 			}
 			++pos;
 		} else if (c == _('\\') && in_string && pos + 1 < code.size()) {
-			new_value += String(c) + code.GetChar(pos + 1); // escape code
+			new_value += c + code.c_str()[pos + 1]; // escape code
 			pos += 2;
 		} else if (is_substr(code, pos, _("if ")) && !in_string) {
 			new_value += _("<code-kw>if</code-kw> ");
@@ -182,8 +182,9 @@ bool KeywordReminderTextValue::checkScript(const ScriptP& script) {
 		LocalScope scope(ctx);
 		for (size_t i = 0 ; i < keyword.parameters.size() ; ++i) {
 			const KeywordParam& kwp = *keyword.parameters[i];
-			String param_name = String(_("param")) << (int)(i+1);
-			String param_value = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
+			basic_string<wchar_t> param_name = _("param");
+			param_name += (char)(i + 49);
+			basic_string<wchar_t> param_value = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
 			ctx.setVariable(param_name, intrusive(new KeywordParamValue(kwp.name, _(""), _(""), param_value)));
 		}
 		script->eval(ctx);

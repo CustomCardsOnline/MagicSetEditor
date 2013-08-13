@@ -449,7 +449,7 @@ bool SetWindow::askSaveAndContinue() {
 				wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, clean_filename(set->short_name), export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 				if (dlg.ShowModal() == wxID_OK) {
 					settings.default_set_dir = dlg.GetDirectory();
-					export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
+					export_set(*set, dlg.GetPath().ToStdWstring(), dlg.GetFilterIndex());
 					return true;
 				} else {
 					return false;
@@ -536,12 +536,15 @@ void SetWindow::updateRecentSets() {
 		if (i >= settings.max_recent_sets) break;
 		if (i < number_of_recent_sets) {
 			// menu item already exists, update it
-			mb->SetLabel(ID_FILE_RECENT + i, String(_("&")) << (i+1) << _(" ") << file);
+			mb->SetLabel(ID_FILE_RECENT + i, (wxString(_("&")) << (i+1) << _(" ") << file).ToStdWstring());
 		} else {
 			// add new item
 			int pos = i + FILE_MENU_SIZE_BEFORE_RECENT_SETS; // HUGE HACK, we should calculate the position to insert!
 			IconMenu* file_menu = static_cast<IconMenu*>(mb->GetMenu(0));
-			file_menu->Insert(pos, ID_FILE_RECENT + i, String(_("&")) << (i+1) << _(" ") << file, wxEmptyString);
+			file_menu->Insert(
+				pos,
+				ID_FILE_RECENT + i,
+				(wxString(_("&")) << (i+1) << _(" ") << file).ToStdWstring(), wxEmptyString);
 		}
 		i++;
 	}
@@ -564,7 +567,7 @@ void SetWindow::onFileOpen(wxCommandEvent&) {
 	if (dlg.ShowModal() == wxID_OK) {
 		settings.default_set_dir = dlg.GetDirectory();
 		wxBusyCursor busy;
-		SetP new_set = import_set(dlg.GetPath());
+		SetP new_set = import_set(dlg.GetPath().ToStdWstring());
 		switchSet(new_set);
 	}
 }
@@ -584,16 +587,10 @@ void SetWindow::onFileSaveAs(wxCommandEvent&) {
 	wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, clean_filename(set->short_name), export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 	if (dlg.ShowModal() == wxID_OK) {
 		settings.default_set_dir = dlg.GetDirectory();
-		export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
+		export_set(*set, dlg.GetPath().ToStdWstring(), dlg.GetFilterIndex());
 		updateTitle(); // title may depend on filename
 	}
 }
-
-/*
-void SetWindow::onFileInspect(wxCommandEvent&) {
-	var wnd = new TreeGridWindow(&this, set);
-	wnd.show();
-}*/
 
 #if defined(__WXMSW__)
 #include "wx/msw/wrapcctl.h"
@@ -632,7 +629,7 @@ void SetWindow::onFileExportImage(wxCommandEvent&) {
 	if (!card)  return; // no card selected
 	String name = wxFileSelector(_TITLE_("save image"), settings.default_export_dir, clean_filename(card->identification()), _(""),
 		                         _("JPEG images (*.jpg)|*.jpg|Windows bitmaps (*.bmp)|*.bmp|PNG images (*.png)|*.png|TIFF images (*.tif)|*.tif"),
-		                         wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+		                         wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this).ToStdWstring();
 	if (!name.empty()) {
 		settings.default_export_dir = wxPathOnly(name);
 		export_image(set, card, name);

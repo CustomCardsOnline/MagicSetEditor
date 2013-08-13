@@ -18,43 +18,6 @@ DECLARE_POINTER_TYPE(PackageVersion);
 DECLARE_POINTER_TYPE(InstallablePackage);
 class PackageDependency;
 
-// ----------------------------------------------------------------------------- : PackageVersion
-
-/*
-
-/// Information on a package in a repository
-class PackageVersionData : public IntrusivePtrVirtualBase {
-  public:
-	PackageVersionData() {}
-	
-	String  name;						///< Name of the package
-	String  short_name;					///< Name to show on package list.
-	String  description;				///< html description
-	bool    hidden;						///< Not shown in the package list (installed automatically as a dependency)
-	
-	PackageVersionP base_version;		///< The locally installed version (if installed)
-	PackageVersionP local_version;		///< Modifications made to the locally installed version?
-	PackageVersionP remote_version;		///< The version available from the server (if available)
-	bool global;						///< The installed package is in the global location, not the user-local one
-	bool new_global;					///< 
-	
-	bool source_local;					///< Is the source
-	String source;						///< Where can the package be downloaded/found?
-	
-	DECLARE_REFLECTION();
-};
-
-class UpdateData {
-	vector<PackageDependencyP> packages;         ///< package/latest-version-number pairs
-	String                     new_updates_url;  ///< updates url has changed? 
-};
-
-IMPLEMENT_REFLECTION_NO_SCRIPT(UpdateData) {
-	REFLECT_NO_SCRIPT(packages);
-	REFLECT_NO_SCRIPT(new_updates_url);
-}
-*/
-
 // ----------------------------------------------------------------------------- : PackageDirectory
 
 /// A directory for packages
@@ -128,7 +91,7 @@ class PackageManager {
 		if (typedP) {
 			return typedP;
 		} else {
-			throw InternalError(format_string(_("Package %s loaded as wrong type"),name));
+			throw InternalError(string_format(_("Package %s loaded as wrong type"),name));
 		}
 	}
 	

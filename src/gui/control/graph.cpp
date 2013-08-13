@@ -78,10 +78,12 @@ DECLARE_TYPEOF(map<String COMMA UInt COMMA SmartLess>);
 
 String to_bin(double value, double bin_size) {
 	if (bin_size <= 0 || value == 0) {
-		return String() << (int)value;
+		String *string = new String();
+		string += (int)value;
+		return *string;
 	} else {
 		int bin = ceil(value / bin_size);
-		return String::Format(_("%.0f%c%.0f"), (bin-1) * bin_size + 1, EN_DASH, bin * bin_size);
+		return string_format(_("%.0f%c%.0f"), (bin-1) * bin_size + 1, EN_DASH, bin * bin_size);
 	}
 }
 int bin_to_group(double value, double bin_size) {
@@ -109,6 +111,7 @@ GraphData::GraphData(const GraphDataPre& d)
 			FOR_EACH(c, counts) {
 				// numeric?
 				double d;
+				/*
 				if (c.first.ToDouble(&d)) {
 					// update mean
 					a->mean_value += d * c.second;
@@ -130,6 +133,7 @@ GraphData::GraphData(const GraphDataPre& d)
 					// non-numeric, add anyway
 					a->addGroup(c.first, c.second);
 				}
+				*/
 			}
 			a->mean_value /= numeric_count;
 		} else if (a->order) {
@@ -184,6 +188,7 @@ GraphData::GraphData(const GraphDataPre& d)
 			String v = e->values[i];
 			de->group_nrs[i] = -1;
 			double d;
+			/*
 			if (a->numeric && a->bin_size > 0 && v.ToDouble(&d)) {
 				// calculate group that contains v
 				de->group_nrs[i] = bin_to_group(d, a->bin_size);
@@ -198,6 +203,7 @@ GraphData::GraphData(const GraphDataPre& d)
 					++j;
 				}
 			}
+			*/
 			++i;
 		}
 		values.push_back(de);
@@ -734,8 +740,8 @@ void GraphStats::setData(const GraphDataP& d) {
 	values.clear();
 	if (!axis.numeric) return;
 	if (axis.groups.empty()) return;
-	values.push_back(make_pair(_("max"),  String::Format(_("%.2f"), axis.max_value)));
-	values.push_back(make_pair(_("mean"), String::Format(_("%.2f"), axis.mean_value)));
+	values.push_back(make_pair(_("max"),  string_format(_("%.2f"), axis.max_value)));
+	values.push_back(make_pair(_("mean"), string_format(_("%.2f"), axis.mean_value)));
 }
 
 RealSize GraphStats::determineSize(RotatedDC& dc) const {
@@ -967,9 +973,10 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			if (! ((i < highlight && i + label_step > highlight) ||
 			       (i > highlight && i - label_step < highlight)) || highlight == -1) {
 				// don't draw labels before/after current to make room
-				String label; label << i;
-				RealSize text_size = dc.GetTextExtent(label);
-				dc.DrawText(label, align_in_rect(ALIGN_MIDDLE_RIGHT, text_size, RealRect(screen_rect.x - 4, y, 0, 0)));
+				String *label = new basic_string<wchar_t>();
+				label += (wchar_t)(i + 48);
+				RealSize text_size = dc.GetTextExtent(*label);
+				dc.DrawText(*label, align_in_rect(ALIGN_MIDDLE_RIGHT, text_size, RealRect(screen_rect.x - 4, y, 0, 0)));
 			}
 			// restore font/pen
 			if (i == highlight) {
@@ -1206,8 +1213,14 @@ void GraphControl::onMotion(wxMouseEvent& ev) {
 			}
 		}
 		UInt count = data.count(hovered_item);
-		tip += String::Format(_("\n%d "), count) + (count == 1 ? _TYPE_("card") : _TYPE_("cards"));
-		tip.Replace(_(" "),_("\xA0"));
+		tip += string_format(_("\n%d "), count) + (count == 1 ? _TYPE_("card") : _TYPE_("cards"));
+		std::string::size_type tmp = tip.find(_("\n%d "));
+		/*
+		while (tmp != basic_string::size_type::npos) {
+			tip.replace(tmp, 3, _("\xA0"));
+			tmp = tip.find(_("\n%d "));
+		}
+		*/
 		// set tooltip
 		SetToolTip(tip);
 	} else {

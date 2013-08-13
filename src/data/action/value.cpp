@@ -168,7 +168,7 @@ TextToggleReminderAction::TextToggleReminderAction(const TextValueP& value, size
 	if (pos == String::npos) {
 		throw InternalError(_("TextToggleReminderAction: not in <kw- tag"));
 	}
-	Char c = old_value.GetChar(pos + 4);
+	Char c = old_value.c_str()[pos + 4];
 	enable = !(c == _('1') || c == _('A')); // if it was not enabled, then enable it
 	old = enable ? _('1') : _('0');
 }

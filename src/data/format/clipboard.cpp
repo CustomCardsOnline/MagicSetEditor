@@ -29,7 +29,7 @@ String serialize_for_clipboard(Package& package, T& object) {
 		WITH_DYNAMIC_ARG(clipboard_package, &package);
 		writer.handle(object);
 	}
-	return stream.GetString();
+	return stream.GetString().ToStdWstring();
 }
 
 template <typename T>
@@ -89,7 +89,7 @@ CardsDataObject::CardsDataObject() {
 
 bool CardsDataObject::getCards(const SetP& set, vector<CardP>& out) {
 	WrappedCards data = { set->game.get(), set->game->name() };
-	deserialize_from_clipboard(data, *set, GetText());
+	deserialize_from_clipboard(data, *set, GetText().ToStdWstring());
 	if (data.cards.empty()) return false;
 	if (data.game_name == set->game->name()) {
 		// Cards are from the same game
@@ -135,7 +135,7 @@ KeywordDataObject::KeywordDataObject() {
 KeywordP KeywordDataObject::getKeyword(const SetP& set) {
 	KeywordP keyword(new Keyword());
 	WrappedKeyword data = { set->game.get(), set->game->name(), keyword};
-	deserialize_from_clipboard(data, *set, GetText());
+	deserialize_from_clipboard(data, *set, GetText().ToStdWstring());
 	if (data.game_name != set->game->name()) return KeywordP(); // Keyword is from a different game
 	else                                     return keyword;
 }

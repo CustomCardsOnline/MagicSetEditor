@@ -61,7 +61,7 @@ class AutoReplaceList : public ItemList {
 
 	/// Get the text of an item in a specific column
 	/** Overrides a function from wxListCtrl */
-	virtual String OnGetItemText (long pos, long col) const;
+	virtual wxString OnGetItemText (long pos, long col) const;
 	/// Get the image of an item, by default no image is used
 	/** Overrides a function from wxListCtrl */
 	virtual int    OnGetItemImage(long pos) const;
@@ -138,7 +138,7 @@ bool AutoReplaceList::compareItems(void* ap, void* bp) const {
 	}
 }
 
-String AutoReplaceList::OnGetItemText (long pos, long col) const {
+wxString AutoReplaceList::OnGetItemText (long pos, long col) const {
 	AutoReplaceP ar = getAR(pos);
 	if (col == 0) return ar->match;
 	if (col == 1) return ar->match;

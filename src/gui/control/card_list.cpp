@@ -306,7 +306,7 @@ void CardListBase::selectColumns() {
 
 // ----------------------------------------------------------------------------- : CardListBase : Item 'events'
 
-String CardListBase::OnGetItemText(long pos, long col) const {
+wxString CardListBase::OnGetItemText(long pos, long col) const {
 	if (col < 0 || (size_t)col >= column_fields.size()) {
 		// wx may give us non existing columns!
 		return wxEmptyString;

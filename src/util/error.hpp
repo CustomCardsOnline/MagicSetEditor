@@ -171,10 +171,6 @@ String get_stack_trace();
 #define CATCH_ALL_ERRORS(handle_now) \
 	catch (const Error& e) { \
 		handle_error(e); \
-	} catch (const std::exception& e) { \
-		/* we don't throw std::exception ourselfs, so this is probably something serious */ \
-		String message(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) ); \
-		handle_error(InternalError(message)); \
 	} catch (...) { \
 		handle_error(InternalError(_("An unexpected exception occurred!"))); \
 	}

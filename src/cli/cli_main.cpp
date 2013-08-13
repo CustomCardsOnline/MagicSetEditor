@@ -116,7 +116,7 @@ bool CLISetInterface::run_script_string(String const& command, bool multiline) {
 	} else {
 		FOR_EACH(error,errors) {
 			if (multiline) {
-				cli.show_message(MESSAGE_ERROR, String::Format(_("On line %d:\t"), error.line) + error.what());
+				cli.show_message(MESSAGE_ERROR, string_format(_("On line %d:\t"), error.line) + error.what());
 			} else {
 				cli.show_message(MESSAGE_ERROR, error.what());
 			}
@@ -169,7 +169,7 @@ void CLISetInterface::handleCommand(const String& command) {
 	try {
 		if (command.empty()) {
 			// empty, ignore
-		} else if (command.GetChar(0) == _(':')) {
+		} else if (command.c_str()[0] == _(':')) {
 			// :something
 			size_t space = min(command.find_first_of(_(' ')), command.size());
 			String before = command.substr(0,space);
@@ -202,7 +202,7 @@ void CLISetInterface::handleCommand(const String& command) {
 					cli << _("set:      ") << set->identification() << ENDL;
 					cli << _("filename: ") << set->absoluteFilename() << ENDL;
 					cli << _("relative: ") << set->relativeFilename() << ENDL;
-					cli << String::Format(_("#cards:   %d"), set->cards.size()) << ENDL;
+					cli << string_format(_("#cards:   %d"), set->cards.size()) << ENDL;
 				} else {
 					cli << _("No set loaded") << ENDL;
 				}
@@ -219,28 +219,10 @@ void CLISetInterface::handleCommand(const String& command) {
 			} else if (before == _(":pwd") || before == _(":p")) {
 				cli << ei.directory_absolute << ENDL;
 			} else if (before == _(":!")) {
-				if (arg.empty()) {
-					cli.show_message(MESSAGE_ERROR,_("Give a shell command to execute."));
-				} else {
-					#ifdef UNICODE
-						#ifdef __WXMSW__
-							_wsystem(arg.c_str()); // TODO: is this function available on other platforms?
-						#else
-							wxCharBuffer buf = arg.fn_str();
-							system(buf);
-						#endif
-					#else
-						system(arg.c_str());
-					#endif
-				}
 			#if USE_SCRIPT_PROFILING
 				} else if (before == _(":profile")) {
 					if (arg == _("full")) {
 						showProfilingStats(profile_root);
-					} else {
-						long level = 1;
-						arg.ToLong(&level);
-						showProfilingStats(profile_aggregated(level));
 					}
 			#endif
 			} else {
@@ -267,7 +249,7 @@ void CLISetInterface::handleCommand(const String& command) {
 			cli <<         _("========  ========  ======  ===============================") << NORMAL << ENDL;
 		} else {
 			for (int i = 1 ; i < level ; ++i) cli << _("  ");
-			cli << String::Format(_("%8.5f  %8.5f  %6d  %s"), item.total_time(), 1000 * item.avg_time(), item.calls, item.name.c_str()) << ENDL;
+			cli << string_format(_("%8.5f  %8.5f  %6d  %s"), item.total_time(), 1000 * item.avg_time(), item.calls, item.name.c_str()) << ENDL;
 		}
 		// show children
 		vector<FunctionProfileP> children;

@@ -189,7 +189,7 @@ void Settings::addRecentFile(const String& filename) {
 	// get absolute path
 	wxFileName fn(filename);
 	fn.Normalize();
-	String filenameAbs = fn.GetFullPath();
+	String filenameAbs = fn.GetFullPath().ToStdWstring();
 	// remove duplicates
 	recent_sets.erase(
 		remove(recent_sets.begin(), recent_sets.end(), filenameAbs),
@@ -233,7 +233,7 @@ IndexMap<FieldP,ValueP>& Settings::exportOptionsFor(const ExportTemplate& export
 
 /// Retrieve the directory to use for settings and other data files
 String user_settings_dir() {
-	String dir = wxStandardPaths::Get().GetUserDataDir();
+	String dir = wxStandardPaths::Get().GetUserDataDir().ToStdWstring();
 	if (!wxDirExists(dir)) wxMkdir(dir);
 	return dir + _("/");
 }

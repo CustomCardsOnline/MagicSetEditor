@@ -160,7 +160,7 @@ ChangePackAction::ChangePackAction(Set& set, size_t pos, const PackTypeP& pack)
 {}
 
 String ChangePackAction::getName(bool to_undo) const {
-	return _ACTION_1_("change",type_name(pack));
+	return _ACTION_1_("change", "pack");
 }
 
 void ChangePackAction::perform(bool to_undo) {

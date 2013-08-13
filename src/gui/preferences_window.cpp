@@ -214,10 +214,10 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	non_normal_export-> SetValue(!settings.default_stylesheet_settings.card_normal_export());
 	#if USE_ZOOM_COMBOBOX
 		zoom_int = static_cast<int>(settings.default_stylesheet_settings.card_zoom() * 100);
-		zoom->SetValue(String::Format(_("%d%%"),zoom_int));
+		zoom->SetValue(string_format(_("%d%%"),zoom_int));
 		int choices[] = {50,66,75,100,120,150,200};
 		for (unsigned int i = 0 ; i < sizeof(choices)/sizeof(choices[0]) ; ++i) {
-			zoom->Append(String::Format(_("%d%%"),choices[i]));
+			zoom->Append(string_format(_("%d%%"),choices[i]));
 		}
 	#else
 		zoom->SetRange(1, 1000);
@@ -274,12 +274,12 @@ void DisplayPreferencesPage::onSelectColumns(wxCommandEvent&) {
 		updateZoom();
 	}
 	void DisplayPreferencesPage::updateZoom() {
-		String s = zoom->GetValue();
+		String s = zoom->GetValue().ToStdWstring();
 		int i = zoom_int;
 		if (wxSscanf(s.c_str(),_("%u"),&i)) {
 			zoom_int = min(max(i,1),1000);
 		}
-		zoom->SetValue(String::Format(_("%d%%"),(int)zoom_int));
+		zoom->SetValue(string_format(_("%d%%"),(int)zoom_int));
 	}
 #endif
 

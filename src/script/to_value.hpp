@@ -54,7 +54,7 @@ template <typename K, typename V> inline String type_name(const pair<K,V>& p) {
 
 /// Script code for an object, or anything else we can show
 template <typename T> inline String to_code(const T& v) {
-	return format_string(_("<%s>"),type_name(v));
+	return string_format(_("<%s>"),type_name(v));
 }
 template <typename T> inline String to_code(const intrusive_ptr<T>& p) {
 	return type_name(*p.get());
@@ -454,7 +454,7 @@ class ScriptRule : public ScriptValue {
        ScriptValueP to_script(int           v);
 inline ScriptValueP to_script(long          v) { return to_script((int) v); }
        ScriptValueP to_script(double        v);
-       ScriptValueP to_script(const String& v);
+       ScriptValueP to_script(const basic_string<wchar_t> v);
        ScriptValueP to_script(Color         v);
        ScriptValueP to_script(AColor        v);
        ScriptValueP to_script(wxDateTime    v);

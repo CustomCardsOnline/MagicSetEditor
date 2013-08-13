@@ -446,7 +446,7 @@ class CardsPanel::ReplaceFindInfo : public FindInfo {
 		panel.card_list->setCard(card);
 		// Replace
 		if (was_selection) {
-			panel.editor->insert(escape(what.GetReplaceString()), _("Replace"));
+			panel.editor->insert(escape(what.GetReplaceString().ToStdWstring()), _("Replace"));
 			return false;
 		} else {
 			return true;

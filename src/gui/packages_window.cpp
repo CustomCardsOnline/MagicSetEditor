@@ -321,15 +321,15 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	// Warn about removing
 	if (to_remove) {
 		int result = wxMessageBox(
-			with_modifications == 0 ? _ERROR_1_("remove packages",           String()<<to_remove)
-			                        : _ERROR_2_("remove packages modified",  String()<<to_remove,  String()<<with_modifications),
+			with_modifications == 0 ? _ERROR_1_("remove packages",           to_remove)
+			                        : _ERROR_2_("remove packages modified",  to_remove,  with_modifications),
 			_TITLE_("packages window"), wxICON_EXCLAMATION | wxYES_NO);
 		if (result == wxNO) return;
 	}
 	// progress dialog
 	wxProgressDialog progress(
 			_TITLE_("installing updates"),
-			String::Format(_ERROR_("downloading updates"), 0, to_download),
+			string_format(_ERROR_("downloading updates"), 0, to_download),
 			to_change + to_download,
 			this,
 			wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_ABORT | wxPD_SMOOTH
@@ -340,7 +340,7 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	int package_pos = 0, step = 0;
 	FOR_EACH(ip, installable_packages) {
 		if (ip->has(PACKAGE_ACT_INSTALL) && ip->installer && !ip->installer->installer) {
-			if (!progress.Update(step++, String::Format(_ERROR_("downloading updates"), ++package_pos, to_download))) {
+			if (!progress.Update(step++, string_format(_ERROR_("downloading updates"), ++package_pos, to_download))) {
 				return; // aborted
 			}
 			// download installer
@@ -363,7 +363,7 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	int success = 0, install = 0, remove = 0;
 	FOR_EACH(ip, installable_packages) {
 		if (ip->has(PACKAGE_ACT_NOTHING)) continue; // package unchanged
-		if (!progress.Update(step++, String::Format(_ERROR_("installing updates"), ++package_pos, to_change))) {
+		if (!progress.Update(step++, string_format(_ERROR_("installing updates"), ++package_pos, to_change))) {
 			// don't allow abort.
 		}
 		bool ok = package_manager.install(*ip);
@@ -376,9 +376,9 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	// Done
 	progress.Update(step++);
 	wxMessageBox(
-		install == success ? _ERROR_1_("install packages successful",String()<<success):
-		remove  == success ? _ERROR_1_("remove packages successful", String()<<success):
-		                     _ERROR_1_("change packages successful", String()<<success),
+		install == success ? _ERROR_1_("install packages successful", success):
+		remove  == success ? _ERROR_1_("remove packages successful", success):
+		                     _ERROR_1_("change packages successful", success),
 		_TITLE_("packages window"), wxICON_INFORMATION | wxOK);
 	// Continue event propagation into the dialog window so that it closes.
 	ev.Skip();

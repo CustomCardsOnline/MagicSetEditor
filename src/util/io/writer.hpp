@@ -45,7 +45,7 @@ class Writer {
 	
 	/// Write a vector to the output stream
 	template <typename T>
-	void handle(const Char* name, const vector<T>& vector);
+	void handle(const basic_string<wchar_t> *name, const vector<T>& vector);
 	
 	/// Write a string to the output stream
 	void handle(const String& str);
@@ -94,7 +94,7 @@ class Writer {
 // ----------------------------------------------------------------------------- : Container types
 
 template <typename T>
-void Writer::handle(const Char* name, const vector<T>& vec) {
+void Writer::handle(const basic_string<wchar_t> *name, const vector<T>& vec) {
 	String vectorKey = singular_form(name);
 	for (typename vector<T>::const_iterator it = vec.begin() ; it != vec.end() ; ++it) {
 		handle(vectorKey, *it);

@@ -201,7 +201,7 @@ void Set::reflect_cards<Writer> (Writer& reflector) {
 			int i = 0;
 
 			while (used.find(full_name) != used.end()) {
-				full_name = String(filename) << _(".") << ++i;
+				full_name = filename + _(".") + (wchar_t)(++i + 48);
 			}
 			used.insert(full_name);
 

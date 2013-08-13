@@ -225,7 +225,7 @@ String name_to_caption(const String& str) {
 	return ret;
 }
 
-String singular_form(const String& str) {
+String singular_form(const basic_string<wchar_t> *str) {
 	assert(str.size() > 1);
 	assert(str.GetChar(str.size() - 1) == _('s')); // ends in 's'
 	if (str.size() > 3 && is_substr(str, str.size()-3, _("ies"))) {

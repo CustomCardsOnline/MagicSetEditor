@@ -51,7 +51,7 @@ String english_number(int i) {
 		default: {
 			if (i < 0 || i >= 100) {
 				// number too large, keep as digits
-				return (String() << i);
+				return (wxString() << i).ToStdWstring();
 			} else if (i < 20) {
 				return english_number(i%10) + _("teen");
 			} else if (i % 10 == 0) {
@@ -78,7 +78,7 @@ String english_ordinal(int i) {
 		default: {
 			if (i <= 0 || i >= 100) {
 				// number too large, keep as digits
-				return String::Format(_("%dth"), i);
+				return string_format(_("%dth"), i);
 			} else if (i < 20) {
 				return english_number(i) + _("th");
 			} else if (i % 10 == 0) {
@@ -114,7 +114,7 @@ String do_english_num(String input, String(*fun)(int)) {
 			if (end != String::npos) {
 				String is = input.substr(start, end - start);
 				long i = 0;
-				if (is.ToLong(&i)) {
+				if (wxString(is).ToLong(&i)) {
 					if (i == 1) {
 						return _("<hint-1>") + substr_replace(input, start, end, fun(i));
 					} else {
@@ -126,7 +126,7 @@ String do_english_num(String input, String(*fun)(int)) {
 		return _("<hint-2>") + input;
 	} else {
 		long i = 0;
-		if (input.ToLong(&i)) {
+		if (wxString(input).ToLong(&i)) {
 			return fun(i);
 		}
 		return input;
@@ -165,7 +165,7 @@ String english_singular(const String& str) {
 		return str.substr(0, str.size() - 2);
 	} else if (str.size() > 5 && is_substr(str, str.size()-3, _("ves")) && (is_substr(str, str.size()-5, _("el")) || is_substr(str, str.size()-5, _("ar")) )) {
 		return str.substr(0, str.size() - 3) + _("f");
-	} else if (str.size() > 1 && str.GetChar(str.size() - 1) == _('s')) {
+	} else if (str.size() > 1 && str.c_str()[str.size() - 1] == _('s')) {
 		return str.substr(0, str.size() - 1);
 	} else if (str.size() >= 3 && is_substr(str, str.size()-3, _("men"))) {
 		return str.substr(0, str.size() - 2) + _("an");
@@ -175,8 +175,8 @@ String english_singular(const String& str) {
 }
 String english_plural(const String& str) {
 	if (str.size() > 2) {
-		Char a = str.GetChar(str.size() - 2);
-		Char b = str.GetChar(str.size() - 1);
+		Char a = str.c_str()[str.size() - 2];
+		Char b = str.c_str()[str.size() - 1];
 		if (b == _('y') && is_constant(a)) {
 			return str.substr(0, str.size() - 1) + _("ies");
 		} else if (b == _('o') && is_constant(a)) {
@@ -240,9 +240,9 @@ String process_english_hints(const String& str) {
 	// 1 for singular, 2 for plural
 	int singplur = 0;
 	for (size_t i = 0 ; i < str.size() ; ) {
-		Char c = str.GetChar(i);
+		Char c = str.c_str()[i];
 		if (is_substr(str, i, _("<hint-"))) {
-			Char h = str.GetChar(i + 6); // hint code
+			Char h = str.c_str()[i + 6]; // hint code
 			if (h == _('1')) {
 				singplur = 1;
 			} else if (h == _('2')) {
@@ -252,7 +252,7 @@ String process_english_hints(const String& str) {
 		} else if (is_substr(str, i, _("<param-"))) {
 			size_t after = skip_tag(str, i);
 			if (after != String::npos) {
-				Char c = str.GetChar(after);
+				Char c = str.c_str()[after];
 				if (singplur == 1 && is_substr(str, after, _("a</param-"))) {
 					// a -> an, where the a originates from english_number_a(1)
 					size_t after_end = skip_tag(str,after+1);
@@ -260,7 +260,7 @@ String process_english_hints(const String& str) {
 						throw Error(_("Incomplete </param> tag"));
 					}
 					if (after_end != String::npos && after_end + 1 < str.size()
-					&& isSpace(str.GetChar(after_end)) && is_vowel(str.GetChar(after_end+1))) {
+					&& isSpace(str.c_str()[after_end]) && is_vowel(str.c_str()[after_end+1])) {
 						ret.append(str,i,after-i);
 						ret += _("an");
 						i = after + 1;
@@ -270,12 +270,13 @@ String process_english_hints(const String& str) {
 					// a -> an?
 					// is there "a" before this?
 					String last = ret.substr(ret.size() - 2);
-					if ( (ret.size() == 2 || !isAlpha(ret.GetChar(ret.size() - 3))) &&
+					if ( (ret.size() == 2 || !isAlpha(ret.c_str()[ret.size() - 3])) &&
 						(last == _("a ") || last == _("A ")) ) {
-						ret.insert(ret.size() - 1, _('n'));
+						ret.push_back(_('n'));
+//						ret.insert(ret.size() - 1, _('n'));
 					}
 				} else if (is_substr(str, after, _("</param-")) && ret.size() >= 1 &&
-							ret.GetChar(ret.size() - 1) == _(' ')) {
+							ret.c_str()[ret.size() - 1] == _(' ')) {
 					// empty param, drop space before it
 					ret.resize(ret.size() - 1);
 				}

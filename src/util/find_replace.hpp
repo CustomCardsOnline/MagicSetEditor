@@ -38,7 +38,7 @@ class FindInfo {
 	/// Case sensitive?
 	inline bool caseSensitive() const { return what.GetFlags() & wxFR_MATCHCASE; }
 	/// String to look for
-	inline const String& findString() const { return what.GetFindString(); }
+	inline const String& findString() const { return what.GetFindString().ToStdWstring(); }
 	
   protected:
 	wxFindReplaceData& what; ///< What to search for, the direction to search in

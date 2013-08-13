@@ -204,7 +204,7 @@ void SymbolFont::split(const String& text, SplitSymbols& out) const {
 						sym->code_regex.assign(sym->code);
 					}
 					Regex::Results results;
-					if (sym->code_regex.matches(results, text.c_str() + pos, text.c_str() + text.length())
+					if (sym->code_regex.matches(results, text.c_str(), pos)
 							&& results.position() == 0 && results.length() > 0) { //Matches the regex
 						if (sym->draw_text >= 0 && sym->draw_text < (int)results.size()) {
 							out.push_back(DrawableSymbol(
@@ -244,7 +244,7 @@ size_t SymbolFont::recognizePrefix(const String& text, size_t start) const {
 			if (!sym->code.empty() && sym->enabled) {
 				if (sym->regex) {
 					Regex::Results results;
-					if (!sym->code_regex.empty() && sym->code_regex.matches(results, text.c_str() + pos, text.c_str() + text.length())
+					if (!sym->code_regex.empty() && sym->code_regex.matches(results, text.c_str(), pos)
 							&& results.position() == 0 && results.length() > 0) { //Matches the regex
 						pos += results.length();
 						goto next_symbol;
@@ -466,7 +466,7 @@ String InsertSymbolMenu::getCode(int id, const SymbolFont& font) const {
 	} else if (id == 0 && type == ITEM_CUSTOM) {
 		String caption = tr(font,_("title"),   name, capitalize_sentence);
 		String message = tr(font,_("message"), name, capitalize_sentence);
-		return wxGetTextFromUser(message, caption);
+		return wxGetTextFromUser(message, caption).ToStdWstring();
 	}
 	return wxEmptyString;
 }

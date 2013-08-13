@@ -206,7 +206,7 @@ void KeywordsPanel::onCommand(int id) {
 			int id = ID_PARAM_REF_MIN;
 			int param = 0;
 			FOR_EACH(p, list->getKeyword()->parameters) {
-				String item = String() << ++param << _(". ") << LEFT_ANGLE_BRACKET << p->name << RIGHT_ANGLE_BRACKET;
+				String item = string_format(_("%d. <%s>"), ++param, p->name);
 				if (p->refer_scripts.empty()) {
 					ref_menu.Append(id++, item);
 				} else {
@@ -242,11 +242,13 @@ String KeywordsPanel::runRefScript(int find_i) {
 	int param = 0;
 	int i = 0;
 	FOR_EACH(p, list->getKeyword()->parameters) {
-		String param_s = String(_("param")) << ++param;
+		basic_string<wchar_t> *param_s = new basic_string<wchar_t>();
+		*param_s += _("param");
+		*param_s += (wchar_t)(++param + 48);
 		if (p->refer_scripts.empty()) {
 			if (i++ == find_i) {
 				// found it
-				return _("{") + param_s + _("}");
+				return string_format(_("{%s}"), param_s);
 			}
 		} else {
 			FOR_EACH(r, p->refer_scripts) {

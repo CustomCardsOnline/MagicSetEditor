@@ -60,112 +60,6 @@ void Installer::validate(Version file_app_version) {
 	}
 }
 
-#if 0
-// ----------------------------------------------------------------------------- : Installing
-
-void Installer::installFrom(const String& filename, bool message_on_success, bool local) {
-	Installer i;
-	i.open(filename);
-	try {
-		i.install(local);
-	} catch (const Error& e) {
-		handle_error(e);
-		return;
-	}
-	if (message_on_success) {
-		//wxMessageBox(_ERROR_2_("successful install", i.name(), String() << i.packaged.size(), 
-		wxMessageBox(String::Format(_("'%s' successfully installed %d package%s."), i.name().c_str(), i.packages.size(), i.packages.size() == 1 ? _("") : _("s")),
-		             _("Magic Set Editor"), wxOK | wxICON_INFORMATION);
-	}
-}
-
-struct dependency_check : public unary_function<bool, PackagedP> {
-	dependency_check(PackageDependencyP dep) : dep (dep) {}
-	bool operator () (PackagedP package) {
-		return package->name() == dep->package && package->version >= dep->version;
-	}
-  private:
-	PackageDependencyP dep;
-};
-
-void Installer::install(bool local, bool check_dependencies) {
-	// Destination directory
-//	String install_dir = local ? ::packages.getLocalDataDir() : ::packages.getGlobalDataDir();
-	String install_dir = _("TODO");
-	if (!wxDirExists(install_dir)) {
-		wxMkdir(install_dir, 0755);
-	}
-	/*
-	// All the packages we're installing.
-	vector<PackagedP> new_packages;
-
-	FOR_EACH(p, packages) {
-		if (wxDirExists(install_dir + _("/") + p) || wxFileExists(install_dir + _("/") + p)) {
-			throw PackageError(_("Package ") + p + _(" is already installed. Overwriting currently not supported."));
-		}
-		PackagedP pack;
-		wxString fn(wxFileName(p).GetExt());
-		if      (fn == _("mse-game"))            pack = intrusive(new Game());
-		else if (fn == _("mse-style"))           pack = intrusive(new StyleSheet());
-		else if (fn == _("mse-locale"))          pack = intrusive(new Locale());
-		else if (fn == _("mse-include"))         pack = intrusive(new IncludePackage());
-		else if (fn == _("mse-symbol-font"))     pack = intrusive(new SymbolFont());
-		else if (fn == _("mse-export-template")) pack = intrusive(new ExportTemplate());
-		else {
-			throw PackageError(_("Unrecognized package type: '") + fn + _("'\nwhile trying to install: ") + p);
-		}
-		Reader reader(openIn(p + _("/") + pack->typeName()));
-		pack->Packaged::reflect_impl(reader);
-		new_packages.push_back(pack);
-	}
-	
-	if (check_dependencies) {
-		// Check dependencies for each and every package.
-		FOR_EACH(p, new_packages) {
-			FOR_EACH(d, p->dependencies) {
-				if (find_if(new_packages.begin(), new_packages.end(), dependency_check(d)) == new_packages.end() &&
-					!::packages.checkDependency(*d, false)) {
-					throw PackageError(_("Unmet dependency for package ") + p->relativeFilename() + _(": ") + d->package + _(", version ") + d->version.toString() + _(" or higher."));
-				}
-			}
-		}
-	}
-	
-	const FileInfos& file_infos = getFileInfos();
-	for (FileInfos::const_iterator it = file_infos.begin() ; it != file_infos.end() ; ++it) {
-		String file = it->first;
-		
-		wxFileName fn(file);
-		wxArrayString dirs = fn.GetDirs();
-		
-		if (fn.IsDir() || !dirs.GetCount() || find(packages.begin(), packages.end(), dirs[0]) == packages.end()) {
-			continue;
-		}
-		
-		String current_dir = install_dir;
-		for (size_t j = 0; j < dirs.GetCount(); ++j) {
-			current_dir += _("/") + dirs[j];
-			if (!wxDirExists(current_dir) && !wxMkdir(current_dir, 0755)) {
-				throw PackageError(_("Cannot create folder ") + current_dir + _(" for install. Warning: some packages may have been installed anyway, and some may only be partially installed."));
-			}
-		}
-		
-		InputStreamP is = openIn(file);
-		wxFileOutputStream os (install_dir + _("/") + file);
-		if (!os.IsOk()) {
-			throw PackageError(_("Cannot create file ") + install_dir + _("/") + file + _(" for install. Warning: some packages may have been installed anyway, and some may only be partially installed."));
-		}
-		os.Write(*is);
-	}
-	*/
-}
-
-void Installer::install(const String& package) {
-	// TODO
-}
-
-#endif
-
 // ----------------------------------------------------------------------------- : Creating
 
 void Installer::addPackage(const String& package) {
@@ -252,7 +146,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(PackageDescription) {
 }
 
 void PackageDescription::merge(const PackageDescription& p2) {
-	if (!icon.Ok() && !icon_url) icon = p2.icon;
+	if (!icon.Ok() && !icon_url.empty()) icon = p2.icon;
 	if (installer_group.empty()) installer_group = p2.installer_group;
 	if (short_name.empty()) short_name = p2.short_name;
 	if (full_name.empty()) full_name = p2.full_name;

@@ -193,19 +193,19 @@ int KeywordList::usage(const Keyword& kw) const {
 
 // ----------------------------------------------------------------------------- : KeywordList : Item text
 
-String KeywordList::OnGetItemText (long pos, long col) const {
+wxString KeywordList::OnGetItemText (long pos, long col) const {
 	const Keyword& kw = *getKeyword(pos);
 	switch(col) {
 		case 0:		return kw.keyword;
 		case 1:		return match_string(kw);
 		case 2:		return kw.mode;
-		case 3:		return String::Format(_("%d"), usage(kw));
+		case 3:		return string_format(_("%d"), usage(kw));
 		case 4: {
 			// convert all whitespace to ' '
 			String formatted;
 			bool seen_space = false;
 			for (size_t i = 0; i < kw.reminder.getUnparsed().size(); ++i) {
-				Char c = kw.reminder.getUnparsed().GetChar(i);
+				Char c = kw.reminder.getUnparsed().c_str()[i];
 				if (isSpace(c)) {
 					seen_space = true;
 				} else {

@@ -479,9 +479,9 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 						if (!itemEnabled(index)) continue;
 						String c = itemText(index);
 #ifdef UNICODE
-						if (!c.empty() && toUpper(c.GetChar(0)) == toUpper(ev.GetUnicodeKey())) {
+						if (!c.empty() && toUpper(c.c_str()[0]) == toUpper(ev.GetUnicodeKey())) {
 #else
-						if (!c.empty() && toUpper(c.GetChar(0)) == toUpper(ev.GetKeyCode())) {
+						if (!c.empty() && toUpper(c.c_str()[0]) == toUpper(ev.GetKeyCode())) {
 #endif
 							// first character matches
 							selected_item = index;

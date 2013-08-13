@@ -172,7 +172,7 @@ template <> void Reader::handle(KeyValidator& k) {
 		k.optional = false;
 	}
 	long l = 0;
-	v.ToLong(&l);
+	//v.ToLong(&l);
 	k.args = l;
 }
 template <> void Writer::handle(const KeyValidator& v) {
@@ -218,8 +218,8 @@ InputStreamP load_resource_text(const String& name) {
 		int len = ::SizeofResource(wxGetInstance(), hResource);
 		return shared(new wxMemoryInputStream(data, len));
 	#else
-        static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/");
-        static String local_path = wxStandardPaths::Get().GetUserDataDir() + _("/resource/");
+        static basic_string<wchar_t> path = (wxStandardPaths::Get().GetDataDir() + _("/resource/")).ToStdWstring();
+        static basic_string<wchar_t> local_path = (wxStandardPaths::Get().GetUserDataDir() + _("/resource/")).ToStdWstring();
         if (wxFileExists(path + name)) return shared(new wxFileInputStream(path + name));
         else return shared(new wxFileInputStream(local_path + name));
 	#endif
@@ -282,7 +282,7 @@ String SubLocale::validate(const String& name, const SubLocaleValidatorP& v) con
 			}
 		} else if (string_format_args(it->second) != kc.second.args) {
 			errors += _("\n   Incorrect number of arguments for:\t") + name + _(": ") + kc.first
-			       +  String::Format(_("\t  expected: %d, found %d"), kc.second.args, string_format_args(it->second));
+			       +  string_format(_("\t  expected: %d, found %d"), kc.second.args, string_format_args(it->second));
 		}
 	}
 	// 2. keys in this but not in v

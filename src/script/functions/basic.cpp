@@ -72,16 +72,16 @@ String format_input(const String& format, const ScriptValue& input) {
 	// determine type of input
 	ScriptType type = input.type();
 	if (type == SCRIPT_DATETIME) {
-		return input.toDateTime().Format(format.c_str());
+		return input.toDateTime().Format(format.c_str()).ToStdWstring();
 	} else {
 		// determine type expected by format string
 		String fmt = _("%") + replace_all(format, _("%"), _(""));
 		if (format.find_first_of(_("DdIiOoXx")) != String::npos) {
-			return String::Format(fmt, input.toInt());
+			return string_format(fmt, input.toInt());
 		} else if (format.find_first_of(_("EeFfGg")) != String::npos) {
-			return String::Format(fmt, input.toDouble());
+			return string_format(fmt, input.toDouble());
 		} else if (format.find_first_of(_("Ss")) != String::npos) {
-			return format_string(fmt, input.toString());
+			return string_format(fmt, input.toString());
 		} else {
 			throw ScriptError(_ERROR_1_("unsupported format", format));
 		}
@@ -117,7 +117,7 @@ SCRIPT_FUNCTION(to_int) {
 		} else if (t == SCRIPT_STRING) {
 			long l;
 			String str = input->toString();
-			if (str.ToLong(&l)) {
+			if (wxString(str).ToLong(&l)) {
 				result = l;
 			} else if (str.empty()) {
 				result = 0;
@@ -147,7 +147,7 @@ SCRIPT_FUNCTION(to_real) {
 			String str = input->toString();
 			if (str.empty()) {
 				result = 0.0;
-			} else if (!str.ToDouble(&result)) {
+			} else if (!wxString(str).ToDouble(&result)) {
 				return delay_error(ScriptErrorConversion(str, input->typeName(), _TYPE_("double")));
 			}
 		} else {
@@ -175,9 +175,9 @@ SCRIPT_FUNCTION(to_number) {
 		} else {
 			String str = input->toString();
 			long l; double d;
-			if (str.ToLong(&l)) {
+			if (wxString(str).ToLong(&l)) {
 				SCRIPT_RETURN((int)l);
-			} else if (str.ToDouble(&d)) {
+			} else if (wxString(str).ToDouble(&d)) {
 				SCRIPT_RETURN((double)d);
 			} else if (str.empty()) {
 				SCRIPT_RETURN(0);
@@ -310,24 +310,24 @@ SCRIPT_FUNCTION(pow) {
 // convert a string to upper case
 SCRIPT_FUNCTION(to_upper_case) {
 	SCRIPT_PARAM_C(String, input);
-	SCRIPT_RETURN(input.Upper());
+	SCRIPT_RETURN(wxString(input).Upper().ToStdWstring());
 }
 
 // convert a string to lower case
 SCRIPT_FUNCTION(to_lower_case) {
 	SCRIPT_PARAM_C(String, input);
-	SCRIPT_RETURN(input.Lower());
+	SCRIPT_RETURN(wxString(input).Lower().ToStdWstring());
 }
 
 // convert a string to title case
 SCRIPT_FUNCTION(to_title_case) {
 	SCRIPT_PARAM_C(String, input);
-	SCRIPT_RETURN(capitalize(input.Lower()));
+	SCRIPT_RETURN(capitalize(wxString(input).Lower().ToStdWstring()));
 }
 // convert a string to sentence case
 SCRIPT_FUNCTION(to_sentence_case) {
 	SCRIPT_PARAM_C(String, input);
-	SCRIPT_RETURN(capitalize_sentence(input.Lower()));
+	SCRIPT_RETURN(capitalize_sentence(wxString(input).Lower().ToStdWstring()));
 }
 
 // reverse a string
@@ -624,14 +624,14 @@ SCRIPT_FUNCTION(random_select_many) {
 	int itemCount = input->itemCount();
 	if (with_replace) {
 		if (itemCount == 0) {
-			throw ScriptError(String::Format(_("Can not select %d items from an empty collection"), count));
+			throw ScriptError(string_format(_("Can not select %d items from an empty collection"), count));
 		}
 		for (int i = 0 ; i < count ; ++i) {
 			ret->value.push_back( input->getIndex( rand() % itemCount ) );
 		}
 	} else {
 		if (count > itemCount) {
-			throw ScriptError(String::Format(_("Can not select %d items from a collection conaining only %d items"), count, input->itemCount()));
+			throw ScriptError(string_format(_("Can not select %d items from a collection conaining only %d items"), count, input->itemCount()));
 		}
 		// transfer all to ret and shuffle
 		ScriptValueP it = input->makeIterator();

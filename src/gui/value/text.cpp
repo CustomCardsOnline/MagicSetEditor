@@ -199,7 +199,7 @@ void DropDownWordList::addWordsFromScript(const WordListWordP& w) {
 		while (comma != String::npos) {
 			strings.push_back(str.substr(prev, comma - prev));
 			prev = comma + 1;
-			if (prev + 1 < str.size() && str.GetChar(prev + 1) == _(' ')) ++prev; // skip space after comma
+			if (prev + 1 < str.size() && str.c_str()[prev + 1] == _(' ')) ++prev; // skip space after comma
 			comma = str.find_first_of(_(','), prev);
 		}
 		strings.push_back(str.substr(prev));
@@ -785,7 +785,7 @@ bool TextValueEditor::doPaste() {
 	wxTheClipboard->Close();
 	if (!ok) return false;
 	// paste
-	replaceSelection(escape(data.GetText()), _ACTION_("paste"));
+	replaceSelection(escape(data.GetText().ToStdWstring()), _ACTION_("paste"));
 	return true;
 }
 
@@ -839,7 +839,7 @@ bool TextValueEditor::hasFormat(int type) const {
 		case ID_FORMAT_REMINDER: {
 			size_t tag = in_tag(val, _("<kw"),  selection_start_i, selection_start_i);
 			if (tag != String::npos && tag + 4 < val.size()) {
-				Char c = val.GetChar(tag + 4);
+				Char c = val.c_str()[tag + 4];
 				return c == _('1') || c == _('A');
 			}
 			return false;
@@ -956,7 +956,7 @@ size_t match_cursor_position(size_t pos1, const String& text1, size_t pos2, cons
 	// Match part before cursor
 	size_t before1, before2;
 	for (before1 = before2 = 0 ; before1 < pos1 && before2 < pos2 ; ++before1, ++before2) {
-		Char c1 = text1.GetChar(pos1-before1-1), c2 = text2.GetChar(pos2-before2-1);
+		Char c1 = text1.c_str()[pos1-before1-1], c2 = text2.c_str()[pos2-before2-1];
 		if      (c1 == c2)                   score += 10000;
 		else if (toLower(c1) == toLower(c2)) score +=  9999;
 		else if (isPunct(c1) && isPunct(c2)) score +=     1;
@@ -968,7 +968,7 @@ size_t match_cursor_position(size_t pos1, const String& text1, size_t pos2, cons
 	// Match part after cursor
 	size_t after1, after2;
 	for (after1 = after2 = 0 ; pos1 + after1 < text1.size() && pos2 + after2 < text2.size() ; ++after1, ++after2) {
-		Char c1 = text1.GetChar(pos1+after1), c2 = text2.GetChar(pos2+after2);
+		Char c1 = text1.c_str()[pos1+after1], c2 = text2.c_str()[pos2+after2];
 		if      (c1 == c2)                   score += 10;
 		else if (toLower(c1) == toLower(c2)) score +=  9;
 		else if (isPunct(c1) && isPunct(c2)) score +=  1;
@@ -1009,18 +1009,18 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 		// where real and expected value are the same, nothing has happend, so don't look there
 		size_t start, end_min;
 		for (start = 0 ; start < min(real_value.size(), expected_value.size()) ; ++start) {
-			if (real_value.GetChar(start) != expected_value.GetChar(start)) break;
+			if (real_value.c_str()[start] != expected_value.c_str()[start]) break;
 		}
 		for (end_min = 0 ; end_min < min(real_value.size(), expected_value.size()) ; ++end_min) {
-			if (real_value.GetChar(real_value.size() - end_min - 1) !=
-				expected_value.GetChar(expected_value.size() - end_min - 1)) break;
+			if (real_value.c_str()[real_value.size() - end_min - 1] !=
+				expected_value.c_str()[expected_value.size() - end_min - 1]) break;
 		}
 		// what is the best cursor position?
 		size_t best_cursor = expected_cursor;
 		if (real_value.size() < expected_value.size()
 			&& expected_cursor < expected_value.size()
-			&& expected_value.GetChar(expected_cursor) == UNTAG_SEP
-			&& real_value.GetChar(start)               == UNTAG_SEP
+			&& expected_value.c_str()[expected_cursor] == UNTAG_SEP
+			&& real_value.c_str()[start]               == UNTAG_SEP
 			&& real_value.size() - end_min == start) {
 			// exception for type-over separators
 			best_cursor = start + 1;
@@ -1157,7 +1157,7 @@ bool TextValueEditor::isWordBoundary(size_t pos_i) const {
 	size_t pos = pos_i;
 	while (true) {
 		if (pos >= val.size()) return true;
-		Char c = val.GetChar(pos);
+		Char c = val.c_str()[pos];
 		if (c == _('<')) pos = skip_tag(val,pos); // skip tags
 		else if (isWordBoundaryChar(c)) return true;
 		else break;
@@ -1166,13 +1166,13 @@ bool TextValueEditor::isWordBoundary(size_t pos_i) const {
 	pos = pos_i;
 	while (true) {
 		if (pos == 0) return true;
-		Char c = val.GetChar(pos - 1);
+		Char c = val.c_str()[pos - 1];
 		if (c == _('>')) {
 			// (try to) skip tags in reverse
 			while (true) {
 				if (pos == 0) return false; // not a tag
 				--pos;
-				c = val.GetChar(pos - 1);
+				c = val.c_str()[pos - 1];
 				if      (c == _('<')) { --pos; break; } // was a tag
 				else if (c == _('>')) return false; // was not a tag
 			}
@@ -1198,7 +1198,7 @@ size_t TextValueEditor::move(size_t pos, size_t start, size_t end, Movement dir)
 
 bool is_word_end(const String& s, size_t pos) {
 	if (pos == 0 || pos >= s.size()) return true;
-	Char c = s.GetChar(pos);
+	Char c = s.c_str()[pos];
 	return isSpace(c) || isPunct(c);
 }
 
@@ -1211,7 +1211,7 @@ bool TextValueEditor::matchSubstr(const String& s, size_t pos, FindInfo& find) {
 	if (find.caseSensitive()) {
 		if (!is_substr(s, pos, find.findString())) return false;
 	} else {
-		if (!is_substr(s, pos, find.findString().Lower())) return false;
+		if (!is_substr(s, pos, wxString(find.findString()).Lower().ToStdWstring())) return false;
 	}
 	// handle
 	bool was_selection = false;
@@ -1234,22 +1234,22 @@ bool TextValueEditor::matchSubstr(const String& s, size_t pos, FindInfo& find) {
 }
 
 bool TextValueEditor::search(FindInfo& find, bool from_start) {
-	String val = value().value->toString();
-	String v = untag(val);
+	wxString val = value().value->toString();
+	wxString v = untag(val.ToStdWstring());
 	if (!find.caseSensitive()) v.LowerCase();
-	size_t selection_min = index_to_untagged(val, min(selection_start_i, selection_end_i));
-	size_t selection_max = index_to_untagged(val, max(selection_start_i, selection_end_i));
+	size_t selection_min = index_to_untagged(val.ToStdWstring(), min(selection_start_i, selection_end_i));
+	size_t selection_max = index_to_untagged(val.ToStdWstring(), max(selection_start_i, selection_end_i));
 	if (find.forward()) {
 		size_t start = min(v.size(), find.searchSelection() ? selection_min : selection_max);
 		for (size_t i = start ; i + find.findString().size() <= v.size() ; ++i) {
-			if (matchSubstr(v, i, find)) return true;
+			if (matchSubstr(v.ToStdWstring(), i, find)) return true;
 		}
 	} else {
 		size_t start = 0;
 		int end      = (int)(find.searchSelection() ? selection_max : selection_min) - (int)find.findString().size();
 		if (end < 0) return false;
 		for (size_t i = end ; (int)i >= (int)start ; --i) {
-			if (matchSubstr(v, i, find)) return true;
+			if (matchSubstr(v.ToStdWstring(), i, find)) return true;
 		}
 	}
 	return false;

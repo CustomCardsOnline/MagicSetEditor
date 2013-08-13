@@ -45,15 +45,15 @@ String get_export_full_path(String& rel_name) {
 		// check if path is okay
 		wxFileName fn2(_("x"));
 		fn2.Normalize(wxPATH_NORM_ALL, ei.directory_absolute);
-		String p1 = fn.GetFullPath();
-		String p2 = fn2.GetFullPath();
+		String p1 = fn.GetFullPath().ToStdWstring();
+		String p2 = fn2.GetFullPath().ToStdWstring();
 		p2.resize(p2.size() - 1); // drop the x
 		if (p2.empty() || p1.size() < p2.size() || p1.substr(0,p2.size()-1) != p2.substr(0,p2.size()-1)) {
 			throw ScriptError(_("Not a relative filename: ") + rel_name);
 		}
 	}
 	rel_name = fn.GetFullName(); // TODO: does this work correctly with subdirectories in target dir?
-	return fn.GetFullPath();
+	return fn.GetFullPath().ToStdWstring();
 }
 
 // ----------------------------------------------------------------------------- : HTML
@@ -176,7 +176,7 @@ String html_escape(const String& str) {
 		} else if (c == _('\"')) {  // escape "
 			ret += _("&quot;");
 		} else if (c >= 0x80) {    // escape non ascii
-			ret += String(_("&#")) << (int)c << _(';');
+			ret += (wxString(_("&#")) << (int)c << _(';')).ToStdWstring();
 		} else {
 			ret += c;
 		}
@@ -204,8 +204,8 @@ String symbols_to_html(const String& str, SymbolFont& symbol_font, double size) 
 			it = ei.exported_images.insert(make_pair(filename, wxSize(img.GetWidth(), img.GetHeight()))).first;
 		}
 		html += _("<img src='") + filename + _("' alt='") + html_escape(sym.text)
-		     +  _("' width='")  + (String() << it->second.x)
-		     +  _("' height='") + (String() << it->second.y) + _("'>");
+		     +  _("' width='")  + (wxString() << it->second.x).ToStdWstring()
+		     +  _("' height='") + (wxString() << it->second.y).ToStdWstring() + _("'>");
 	}
 	return html;
 }
@@ -219,7 +219,7 @@ String to_html(const String& str_in, const SymbolFontP& symbol_font, double symb
 	TagStack tags;
 	String symbols;
 	for (size_t i = 0 ; i < str.size() ; ) {
-		Char c = str.GetChar(i);
+		Char c = str.c_str()[i];
 		if (c == _('<')) {
 			++i;
 			if        (is_substr(str, i, _("b"))) {
@@ -255,7 +255,7 @@ String to_html(const String& str_in, const SymbolFontP& symbol_font, double symb
 				} else if (c == _('&')) {  // escape &
 					ret += _("&amp;");
 				} else if (c >= 0x80) {    // escape non ascii
-					ret += String(_("&#")) << (int)c << _(';');
+					ret += (wxString(_("&#")) << (int)c << _(';')).ToStdWstring();
 				} else if (c == _('\n')) {
 					ret += _("<br>\n");
 				} else {
@@ -309,7 +309,7 @@ String to_bbcode(const String& str_in) {
 	TagStack tags;
 	String symbols;
 	for (size_t i = 0 ; i < str.size() ; ) {
-		Char c = str.GetChar(i);
+		Char c = str.c_str()[i];
 		if (c == _('<')) {
 			++i;
 			if        (is_substr(str, i, _("b"))) {

@@ -86,7 +86,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 	selector  = new ImageSliceSelector(this, ID_SELECTOR, slice);
 	preview   = new ImageSlicePreview (this, ID_PREVIEW,  slice, mask);
 	
-	String sizes[] = { _LABEL_("original size")
+	wxString sizes[] = { _LABEL_("original size")
 	                 , _LABEL_("size to fit")
 	                 , _LABEL_("force to fit")
 	                 , _LABEL_("custom size") };

@@ -55,11 +55,11 @@ AColor parse_acolor(const String& v) {
 
 String format_acolor(AColor col) {
 	if (col.alpha == 255) {
-		return String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue());
+		return string_format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue());
 	} else if (col.alpha == 0) {
 		return _("transparent");
 	} else {
-		return String::Format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.alpha);
+		return string_format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.alpha);
 	}
 }
 

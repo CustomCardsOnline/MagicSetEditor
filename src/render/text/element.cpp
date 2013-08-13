@@ -94,7 +94,7 @@ struct TextElementsFromString {
 		size_t text_start = start;
 		// for each character...
 		for (size_t pos = start ; pos < end ; ) {
-			Char c = text.GetChar(pos);
+			Char c = text.c_str()[pos];
 			if (c == _('<')) {
 				if (text_start < pos) {
 					// text element before this tag?
@@ -127,7 +127,7 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</code")))       code        -= 1;
 				else if (is_substr(text, tag_start, _( "<color"))) {
 					size_t colon = text.find_first_of(_(">:"), tag_start);
-					if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
+					if (colon < pos - 1 && text.c_str()[colon] == _(':')) {
 						AColor c = parse_acolor(text.substr(colon+1, pos-colon-2));
 						if (!c.Ok()) c = style.font.color;
 						colors.push_back(c);
@@ -137,10 +137,10 @@ struct TextElementsFromString {
 				}
 				else if (is_substr(text, tag_start, _( "<size"))) {
 					size_t colon = text.find_first_of(_(">:"), tag_start);
-					if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
+					if (colon < pos - 1 && text.c_str()[colon] == _(':')) {
 						double size = style.font.size;
 						String v = text.substr(colon+1, pos-colon-2);
-						v.ToDouble(&size);
+						//v.ToDouble(&size);
 						sizes.push_back(size);
 					}
 				} else if (is_substr(text, tag_start, _("</size"))) {
@@ -152,9 +152,9 @@ struct TextElementsFromString {
 					if (pos != String::npos) {
 						String ref = text.substr(tag_start + 10, pos - tag_start - 11);
 						long ref_n;
-						if (ref.ToLong(&ref_n)) {
-							param_id = (ref_n - 1)%param_colors_count + param_colors_count;
-						}
+						//if (ref.ToLong(&ref_n)) {
+						//	param_id = (ref_n - 1)%param_colors_count + param_colors_count;
+						//}
 					}
 					param_ref += 1;
 				}

@@ -148,7 +148,7 @@ class ApprExpansionDatabase : public ApprDatabase {
 void ApprExpansionDatabase::doRead(wxInputStream& in) {
 	wxTextInputStream tin(in);
 	while (!in.Eof()) {
-		String l = tin.ReadLine();
+		String l = tin.ReadLine().ToStdWstring();
 		if (l.size() < 3) continue;
 		order.push_back(l.substr(0,2));
 		expansions[l.substr(0,2)] = l.substr(3);
@@ -160,7 +160,7 @@ void ApprExpansionDatabase::doWrite(wxOutputStream& out) {
 	// write in order first
 	FOR_EACH(c, order) {
 		String code = c;
-		if (code.GetChar(0) != _('-')) {
+		if (code.c_str()[0] != _('-')) {
 			// but not the rarities
 			tout << code << _("-") << expansions[c] << _("\n");
 			expansions.erase(c);
@@ -169,14 +169,14 @@ void ApprExpansionDatabase::doWrite(wxOutputStream& out) {
 	// the remaing expansions (our new set)
 	FOR_EACH(e, expansions) {
 		String code = e.first;
-		if (code.GetChar(0) != _('-')) {
+		if (code.c_str()[0] != _('-')) {
 			tout << code << _("-") << e.second << _("\n");
 		}
 	}
 	// and at last the rarities
 	FOR_EACH(c, order) {
 		String code = c;
-		if (code.GetChar(0) == _('-')) {
+		if (code.c_str()[0] == _('-')) {
 			tout << c << _("-") << expansions[c] << _("\n");
 		}
 	}
@@ -217,7 +217,7 @@ void ApprFormatDatabase::doRead(wxInputStream& in) {
 	wxTextInputStream tin(in);
 	// read titles
 	while (!in.Eof()) {
-		String l = trim(tin.ReadLine());
+		String l = trim(tin.ReadLine().ToStdWstring());
 		if (l == _("<Titles>")) {
 			// ignore header
 		} else if (l == _("<Format>")) {
@@ -232,7 +232,7 @@ void ApprFormatDatabase::doRead(wxInputStream& in) {
 	// read formats
 	size_t i = 0;
 	while (!in.Eof() && i < formats.size()) {
-		String l = trim(tin.ReadLine());
+		String l = trim(tin.ReadLine().ToStdWstring());
 		size_t pos = l.find_first_of(_('='));
 		if (pos == String::npos)  continue;
 		formats[i].sets = l.substr(pos + 1);
@@ -305,8 +305,8 @@ void ApprDistroDatabase::doRead(InputStream& in) {
 	wxTextInputStream tin(in);
 	ApprDistro* last = 0;
 	while (!in.Eof()) {
-		String l = trim(tin.ReadLine());
-		if (l.size() > 2 && l.GetChar(0) == _('<')) {
+		String l = trim(tin.ReadLine().ToStdWstring());
+		if (l.size() > 2 && l.c_str()[0] == _('<')) {
 			// new code
 			l = l.substr(1, l.size() - 2);
 			order.push_back(l);
@@ -351,7 +351,9 @@ void ApprDistro::write(const String& code, wxTextOutputStream& tout) {
 }
 
 void ApprDistro::writeD(wxTextOutputStream& tout, const String& name, int c, int u, int r) {
-	tout.WriteString(_("    ")+name+_("=R") << r << _(",U") << u << _(",C") << c << _("\n"));
+	tout.WriteString(
+		string_format("    %s=R%s,U%s,C%s\n", r, u, c)
+	);
 }
 
 // ----------------------------------------------------------------------------- : Card database
@@ -505,7 +507,7 @@ void ApprCardRecord::removeSet(const String& code) {
 	if (pos == String::npos)  return;
 	String before = sets.substr(0, pos);
 	String after  = sets.substr(pos + code.size());
-	if (!before.empty() && before.GetChar(before.size()-1) == _(',')) {
+	if (!before.empty() && before.c_str()[before.size() - 1] == _(',')) {
 		// remove comma
 		before.resize(before.size() - 1);
 	}
@@ -539,8 +541,10 @@ void ApprCardDatabase::doRead(wxInputStream& in) {
 	FOR_EACH(card, cards) {
 		if (++i % 100 == 0) {
 			// report progress sometimes
-			progress_target->onProgress(0.4f * float(i) / cards.size(),
-			                            String(_("reading card ")) << i << _(" of ") << (int)cards.size());
+			progress_target->onProgress(
+				0.4f * float(i) / cards.size(),
+				string_format(_("reading card %i of %i"), i, cards.size())
+			);
 		}
 		card = intrusive(new ApprCardRecord());
 		card->readHead(data);
@@ -559,8 +563,10 @@ void ApprCardDatabase::doWrite(wxOutputStream& out) {
 	FOR_EACH(card, cards) {
 		if (++i % 100 == 0) {
 			// report progress sometimes
-			progress_target->onProgress(0.4f + 0.4f * float(i) / cards.size(),
-			                            String(_("writing card ")) << i << _(" of ") << (int)cards.size());
+			progress_target->onProgress(
+				0.4f + 0.4f * float(i) / cards.size(),
+				string_format(_("writing card %i of %i"), i, cards.size())
+			);
 		}
 		card->data_pos = out.TellO();
 		card->writeCard(data);
@@ -577,16 +583,14 @@ void ApprCardDatabase::doWrite(wxOutputStream& out) {
 	FOR_EACH(card, cards) {
 		if (++i % 100 == 0) {
 			// report progress sometimes
-			progress_target->onProgress(0.8f + 0.2f * float(i) / cards.size(),
-			                            String(_("writing header ")) << i << _(" of ") << (int)cards.size());
+			progress_target->onProgress(
+				0.8f + 0.2f * float(i) / cards.size(),
+				string_format(_("writing header %i of %i"), i, (int)cards.size())
+			);
 		}
 		card->writeHead(data);
 	}
 }
-
-
-
-
 
 // ----------------------------------------------------------------------------- : Export dialog
 
@@ -671,14 +675,14 @@ void ApprenticeExportWindow::onOk(wxCommandEvent& ev) {
 	// store settings
 	settings.apprentice_location = apprentice->GetValue();
 	// store new code
-	String new_set_code = set_code->GetValue();
+	String new_set_code = set_code->GetValue().ToStdWstring();
 	if (new_set_code.size() != 2) {
 		wxMessageBox(_("The set code must be 2 characters long"),
 			         _("Invalid set code"), wxOK | wxICON_ERROR);
 		return;
 	}
-	new_set_code.MakeUpper();
-	set->apprentice_code.MakeUpper();
+	//new_set_code.MakeUpper();
+	//set->apprentice_code.MakeUpper();
 	if (set->apprentice_code != new_set_code) {
 		// changed something in the set
 		set->apprentice_code = new_set_code;

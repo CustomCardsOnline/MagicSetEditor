@@ -76,11 +76,16 @@ class Reader {
 	
 	/// Handle an object: read it if it's name matches
 	template <typename T>
-	void handle(const Char* name, T& object) {
+	void handle(const basic_string<wchar_t> *name, T& object) {
 		if (enterBlock(name)) {
 			handle_greedy(object);
 			exitBlock();
 		}
+	}
+	template <typename T>
+	void handle(const wchar_t *name, T& object) {
+		basic_string<wchar_t> *n = new basic_string<wchar_t>(name);
+		this->handle(n, object);
 	}
 	/// Handle a value
 	template <typename T>
@@ -88,7 +93,7 @@ class Reader {
 	
 	/// Reads a vector from the input stream
 	template <typename T>
-	void handle(const Char* name, vector<T>& vector);
+	void handle(const basic_string<wchar_t> *name, vector<T>& vector);
 	
 	/// Reads an object of type T from the input stream
 	template <typename T> void handle(T&);
@@ -153,7 +158,8 @@ class Reader {
 	// --------------------------------------------------- : Reading the stream
 	
 	/// Is there a block with the given key under the current cursor? if so, enter it
-	bool enterBlock(const Char* name);
+	bool enterBlock(const basic_string<wchar_t> *name);
+	bool enterBlock(const basic_string<wchar_t> name);
 	/// Enter any block, no matter what the key
 	bool enterAnyBlock();
 	/// Leave the block we are in
@@ -209,7 +215,7 @@ inline void after_reading(intrusive_ptr<T>& x, Version ver) {
 template <typename T> void update_index(T&, size_t index) {}
 
 template <typename T>
-void Reader::handle(const Char* name, vector<T>& vector) {
+void Reader::handle(const basic_string<wchar_t> *name, vector<T>& vector) {
 	String vectorKey = singular_form(name);
 	while (enterBlock(vectorKey)) {
 		vector.resize(vector.size() + 1);

@@ -53,7 +53,7 @@ WelcomeWindow::WelcomeWindow()
 		if (wxFileName::FileExists(filename) || wxFileName::DirExists(filename + _("/"))) {
 			#ifdef USE_HOVERBUTTON
 				wxFileName n(filename);
-				open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _HELP_1_("last opened set", n.GetName()));
+				open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _HELP_1_("last opened set", n.GetName().ToStdWstring()));
 			#else
 				open_last       = new wxButton(this, ID_FILE_RECENT, _BUTTON_("last opened set"));
 			#endif
@@ -106,7 +106,7 @@ void WelcomeWindow::onOpenSet(wxCommandEvent&) {
 		settings.default_set_dir = dlg->GetDirectory();
 		wxBusyCursor wait;
 		try {
-			close(import_set(dlg->GetPath()));
+			close(import_set(dlg->GetPath().ToStdWstring()));
 		} catch (Error& e) {
 			handle_error(_("Error loading set: ") + e.what());
 		}

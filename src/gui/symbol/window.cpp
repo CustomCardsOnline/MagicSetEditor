@@ -211,13 +211,13 @@ void SymbolWindow::onFileNew(wxCommandEvent& ev) {
 }
 
 void SymbolWindow::onFileOpen(wxCommandEvent& ev) {
-	String name = wxFileSelector(_("Open symbol"),settings.default_symbol_dir,_(""),_(""),_("Symbol files|*.mse-symbol;*.bmp|MSE2 symbol files (*.mse-symbol)|*.mse-symbol|Images/MSE1 symbol files|*.bmp;*.png;*.jpg;*.gif"),wxFD_OPEN|wxFD_FILE_MUST_EXIST, this);
+	String name = wxFileSelector(_("Open symbol"),settings.default_symbol_dir,_(""),_(""),_("Symbol files|*.mse-symbol;*.bmp|MSE2 symbol files (*.mse-symbol)|*.mse-symbol|Images/MSE1 symbol files|*.bmp;*.png;*.jpg;*.gif"),wxFD_OPEN|wxFD_FILE_MUST_EXIST, this).ToStdWstring();
 	if (!name.empty()) {
 		settings.default_symbol_dir = wxPathOnly(name);
 		wxFileName n(name);
-		String ext = n.GetExt();
+		String ext = n.GetExt().ToStdWstring();
 		SymbolP symbol;
-		if (ext.Lower() == _("mse-symbol")) {
+		if (ext.compare(_("mse-symbol")) == 0) {
 			wxFileInputStream stream(name);
 			Reader reader(stream, nullptr, name);
 			reader.handle_greedy(symbol);
@@ -239,7 +239,7 @@ void SymbolWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SymbolWindow::onFileSaveAs(wxCommandEvent& ev) {
-	String name = wxFileSelector(_("Save symbol"),settings.default_set_dir,_(""),_(""),_("Symbol files (*.mse-symbol)|*.mse-symbol"),wxFD_SAVE, this);
+	String name = wxFileSelector(_("Save symbol"),settings.default_set_dir,_(""),_(""),_("Symbol files (*.mse-symbol)|*.mse-symbol"),wxFD_SAVE, this).ToStdWstring();
 	if (!name.empty()) {
 		settings.default_set_dir = wxPathOnly(name);
 		wxFileOutputStream stream(name);

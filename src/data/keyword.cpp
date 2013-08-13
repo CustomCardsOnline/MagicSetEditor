@@ -97,41 +97,6 @@ IMPLEMENT_REFLECTION(Keyword) {
 	REFLECT(mode);
 }
 
-/*//%%
-String KeywordParam::make_separator_before() const {
-	// decode regex; find a string that matches it
-	String ret;
-	int disabled = 0;
-	for (size_t i = 0 ; i < separator_before_is.size() ; ++i) {
-		Char c = separator_before_is.GetChar(i);
-		if (c == _('(')) {
-			if (disabled) ++disabled;
-		} else if (c == _(')')) {
-			if (disabled) --disabled;
-		} else if (!disabled) {
-			if (c == _('|')) {
-				disabled = 1; // disable after |
-			} else if (c == _('+') || c == _('*') || c == _('?') || c == _('^') || c == _('$')) {
-				// ignore
-			} else if (c == _('\\') && i + 1 < separator_before_is.size()) {
-				// escape
-				ret += separator_before_is.GetChar(++i);
-			} else if (c == _('[') && i + 1 < separator_before_is.size()) {
-				// character class
-				c = separator_before_is.GetChar(++i);
-				if (c != _('^')) ret += c;
-				// ignore the rest of the class
-				for ( ++i ; i < separator_before_is.size() ; ++i) {
-					c = separator_before_is.GetChar(i);
-					if (c == _(']')) break;
-				}
-			} else {
-				ret += c;
-			}
-		}
-	}
-	return ret;
-}*/
 void KeywordParam::compile() {
 	// compile separator_before
 	if (!separator_before_is.empty() && separator_before_re.empty()) {
@@ -160,7 +125,7 @@ void KeywordParam::eat_separator_before(String& text) {
 void KeywordParam::eat_separator_after(const String& text, size_t& i) {
 	if (separator_after_eat.empty()) return;
 	Regex::Results result;
-	if (separator_after_eat.matches(result, text, i, text.length())) {
+	if (separator_after_eat.matches(result, text, i)) {
 		// advance past the separator
 		assert(result.position() == 0);
 		i += result.length();
@@ -198,7 +163,7 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 	#endif
 	// Parse the 'match' string
 	for (size_t i = 0 ; i < match.size() ;) {
-		Char c = match.GetChar(i);
+		Char c = match.c_str()[i];
 		if (is_substr(match, i, _("<atom-param"))) {
 			// parameter, determine type...
 			size_t start = skip_tag(match, i), end = match_close_tag(match, i);
@@ -345,7 +310,7 @@ void KeywordDatabase::add(const Keyword& kw) {
 	size_t param = 0;
 	bool only_star = true;
 	for (size_t i = 0 ; i < kw.match.size() ;) {
-		Char c = kw.match.GetChar(i);
+		Char c = kw.match.c_str()[i];
 		if (is_substr(kw.match, i, _("<atom-param"))) {
 			i = match_close_tag_end(kw.match, i);
 			// parameter, is there a separator we should eat?
@@ -455,11 +420,11 @@ String KeywordDatabase::expand(const String& text,
 		char expand_type = default_expand_type;
 		
 		for (size_t i = 0 ; i < tagged.size() ;) {
-			Char c = tagged.GetChar(i);
+			Char c = tagged.c_str()[i];
 			// tag?
 			if (c == _('<')) {
 				if (is_substr(tagged, i, _("<kw-")) && i + 4 < tagged.size()) {
-					expand_type = tagged.GetChar(i + 4); // <kw-?>
+					expand_type = tagged.c_str()[i + 4];
 					tagged = tagged.erase(i, skip_tag(tagged,i)-i); // remove the tag from the string
 				} else if (is_substr(tagged, i, _("</kw-"))) {
 					expand_type = default_expand_type;
@@ -554,10 +519,10 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 	// a part of tagged has not been searched for <kw- tags
 	// this can happen when the trie incorrectly matches too early
 	for (size_t j = expand_type_known_upto+1 ; j < start ;) {
-		Char c = tagged.GetChar(j);
+		Char c = tagged.c_str()[j];
 		if (c == _('<')) {
 			if (is_substr(tagged, j, _("<kw-")) && j + 4 < tagged.size()) {
-				expand_type = tagged.GetChar(j + 4); // <kw-?>
+				expand_type = tagged.c_str()[j + 4];
 			} else if (is_substr(tagged, j, _("</kw-"))) {
 				expand_type = 'a';
 			}
@@ -617,7 +582,6 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 			// strip separator_after
 			if (!kwp.separator_after_re.empty() && kwp.separator_after_re.matches(sep_match, param)) {
 				size_t sep_start = sep_match.position();
-				assert(sep_match[0].second == param.c_str() + param.length()); // should only match at end of param
 				separator_after.assign(param, sep_start, String::npos);
 				param.resize(sep_start);
 				// strip from tagged version
@@ -650,7 +614,10 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 				}
 			}
 			part  = separator_before + script_part->toString() + separator_after;
-			ctx.setVariable(String(_("param")) << (int)(submatch/2), script_param);
+			ctx.setVariable(
+				String(_("param")) + (wchar_t)((submatch/2) + 48),
+				script_param
+			);
 			
 		} else if (correct_case) {
 			// Plain text, check if the case matches
@@ -660,8 +627,8 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 					correct_case = false;
 					break;
 				}
-				Char actual_char = untagged.GetChar(i);
-				Char match_char  = kw.match.GetChar(pos_in_match_string);
+				Char actual_char = untagged.c_str()[i];
+				Char match_char  = kw.match.c_str()[pos_in_match_string];
 				if (actual_char != match_char) {
 					correct_case = false;
 					break;

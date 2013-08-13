@@ -22,7 +22,7 @@
  *
  *            (times are avarage over all calls, in ms)
  */
-#define USE_BOOST_REGEX 0
+#define USE_BOOST_REGEX 1
 
 #if USE_BOOST_REGEX
 	#include <boost/regex.hpp>

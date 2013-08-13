@@ -35,8 +35,8 @@ class MSE2FileFormat : public FileFormat {
 		}
 		// Open the set
 		SetP set(new Set);
-		set->open(set_name);
-		settings.addRecentFile(set_name);
+		set->open(set_name.ToStdWstring());
+		settings.addRecentFile(set_name.ToStdWstring());
 		return set;
 	}
 	virtual void exportSet(Set& set, const String& filename, bool is_copy) {

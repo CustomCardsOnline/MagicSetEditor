@@ -24,7 +24,7 @@ class wxTextOutputStream;
 // ----------------------------------------------------------------------------- : String type
 
 /// The string type used throughout MSE
-typedef wxString String;
+typedef basic_string<wchar_t> String;
 
 DECLARE_TYPEOF_NO_REV(String); // iterating over characters in a string
 
@@ -166,7 +166,7 @@ String name_to_caption(const String&);
 /** Used for reflection, for example "vector<T> apples" is written with keys
  *  singular_form("apples"), which is "apple"
  */
-String singular_form(const String&);
+String singular_form(const basic_string<wchar_t> *);
 
 /// Remove a shortcut from a menu string
 /** e.g. "Cut\tCtrl+X" --> "Cut"

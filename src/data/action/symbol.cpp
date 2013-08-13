@@ -20,7 +20,7 @@ DECLARE_TYPEOF_COLLECTION(ControlPointP);
 // ----------------------------------------------------------------------------- : Utility
 
 String action_name_for(const set<SymbolPartP>& parts, const String& action) {
-	return format_string(action, parts.size() == 1 ? (*parts.begin())->name : _TYPE_("shapes"));
+	return string_format(action, parts.size() == 1 ? (*parts.begin())->name : _TYPE_("shapes"));
 }
 
 SymbolPartsAction::SymbolPartsAction(const set<SymbolPartP>& parts)

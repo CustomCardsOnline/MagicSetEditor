@@ -66,6 +66,10 @@ bool Reader::enterAnyBlock() {
 	return true;
 }
 
+bool Reader::enterBlock(const basic_string<wchar_t> name) {
+	this->enterBlock(name.c_str());
+}
+
 bool Reader::enterBlock(const Char* name) {
 	if (state == ENTERED) moveNext(); // on the key of the parent block, first move inside it
 	if (indent != expected_indent) return false; // not enough indentation

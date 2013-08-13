@@ -80,7 +80,7 @@ void export_images(const SetP& set, const vector<CardP>& cards,
 		// filename for this card
 		Context& ctx = set->getContext(card);
 		String filename = clean_filename(untag(ctx.eval(*filename_script)->toString()));
-		if (!filename) continue; // no filename -> no saving
+		if (!filename.empty()) continue; // no filename -> no saving
 		// full path
 		fn.SetFullName(filename);
 		// does the file exist?

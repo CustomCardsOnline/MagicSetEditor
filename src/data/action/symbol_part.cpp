@@ -82,7 +82,7 @@ Vector2D constrain_snap_vector_offset(const Vector2D& off1, const Vector2D& off2
 }
 
 String action_name_for(const set<ControlPointP>& points, const String& action) {
-	return format_string(action, points.size() == 1 ? _TYPE_("point") : _TYPE_("points"));
+	return string_format(action, points.size() == 1 ? _TYPE_("point") : _TYPE_("points"));
 }
 
 

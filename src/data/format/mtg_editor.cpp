@@ -74,7 +74,7 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
 	while (!f.Eof()) {
 		// read a line
 		if (!current_card) current_card = intrusive(new Card(*set->game));
-		String line = file.ReadLine();
+		String line = file.ReadLine().ToStdWstring();
 		if        (line == _("#SET###########")) {										// set.title
 			target = &set->value(_("title"));
 		} else if (line == _("#SETDATE#######")) {										// date
@@ -252,22 +252,22 @@ void MtgEditorFileFormat::translateTags(String& value) {
 	String ret;
 	size_t pos = 0;
 	while (pos < value.size()) {
-		Char c = value.GetChar(pos);
+		Char c = value.c_str()[pos];
 		++pos;
 		if (c == _('<')) {
 			String tag;
 			while (pos < value.size()) {
-				c = value.GetChar(pos);
+				c = value.c_str()[pos];
 				++pos;
 				if (c == _('>'))  break;
 				else tag += c;
 			}
-			tag.MakeUpper();
+			//tag.MakeUpper();
 			unsigned long number;
 			if (tag==_("W") || tag==_("U") || tag==_("B") || tag==_("R") || tag==_("G") || tag==_("X") || tag==_("Y") || tag==_("Z")) {
 				ret += _("<sym>") + tag + _("</sym>");
-			} else if (tag.ToULong(&number)) {
-				ret += _("<sym>") + tag + _("</sym>");
+			//} else if (tag.ToULong(&number)) {
+			//	ret += _("<sym>") + tag + _("</sym>");
 			} else if (tag==_("T") || tag==_("TAP")) {
 				ret += _("<sym>T</sym>");
 			} else if (tag==_("THIS")) {
