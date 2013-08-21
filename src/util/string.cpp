@@ -187,7 +187,8 @@ Char canonical_name_form(Char c) {
 String canonical_name_form(const String& str) {
 	String ret;
 	ret.reserve(str.size());
-	FOR_EACH_CONST(c, str) {
+	for (int i = 0; i < str.length(); i++) {
+		wchar_t c = str[i];
 		ret += canonical_name_form((Char)c);
 	}
 	return ret;
@@ -200,7 +201,8 @@ Char uncanonical_name_form(Char c) {
 String uncanonical_name_form(const String& str) {
 	String ret;
 	ret.reserve(str.size());
-	FOR_EACH_CONST(c, str) {
+	for (int i = 0; i < str.length(); i++) {
+		wchar_t c = str[i];
 		ret += uncanonical_name_form((Char)c);
 	}
 	return ret;
@@ -210,7 +212,8 @@ String name_to_caption(const String& str) {
 	String ret;
 	ret.reserve(str.size());
 	bool leading = true;
-	FOR_EACH_CONST(c, str) {
+	for (int i = 0; i < str.length(); i++) {
+		wchar_t c = str[i];
 		if ((c == _('_') || c == _(' '))) {
 			ret += leading ? c : _(' ');
 		} else {
@@ -403,7 +406,10 @@ bool smart_equal(const String& sa, const String& sb) {
 
 bool starts_with(const String& str, const String& start) {
 	if (str.size() < start.size()) return false;
-	FOR_EACH_2_CONST(a, str, b, start) {
+	for (int i = 0; i < start.length(); i++) {
+		wchar_t a = str[i];
+		wchar_t b = start[i];
+
 		if (a != b) return false;
 	}
 	return true;
@@ -464,14 +470,18 @@ String regex_escape(Char c) {
 /// Escape a string for use in regular expressions
 String regex_escape(const String& s) {
 	String ret;
-	FOR_EACH_CONST(c,s) ret += regex_escape(static_cast<Char>(c));
+	for (int i = 0; i < s.length(); i++) {
+		wchar_t c = s[i];
+		ret += regex_escape(static_cast<Char>(c));
+	}
 	return ret;
 }
 
 String make_non_capturing(const String& re) {
 	String ret;
 	bool escape = false, bracket = false, capture = false;
-	FOR_EACH_CONST(c, re) {
+	for (int i = 0; i < re.length(); i++) {
+		wchar_t c = re[i];
 		if (capture) {
 			if (c != _('?')) {
 				// change this capture into a non-capturing "(" by appending "?:"

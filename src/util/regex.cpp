@@ -24,11 +24,10 @@ void Regex::assign(const String& code) {
 	}
 }
 
-void Regex::replace_all(String* input, const String& format) {
-	//std::basic_string<Char> fmt; format_string(format,fmt);
-	std::basic_string<Char> fmt(format.begin(),format.end());
-	String output;
-	regex_replace(insert_iterator<String>(output, output.end()),
+void Regex::replace_all(basic_string<wchar_t>* input, const basic_string<wchar_t>& format) {
+	std::basic_string<wchar_t> fmt(format.begin(),format.end());
+	basic_string<wchar_t> output;
+	regex_replace(insert_iterator<basic_string<wchar_t> >(output, output.end()),
 	              input->begin(), input->end(), regex, fmt, boost::format_sed);
 	*input = output;
 }

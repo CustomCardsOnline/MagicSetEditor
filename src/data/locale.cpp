@@ -185,7 +185,9 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(LocaleValidator) {
 int string_format_args(const String& str) {
 	int count = 0;
 	bool in_percent = false;
-	FOR_EACH_CONST(c, str) {
+	for (int i = 0; i < str.length(); i++) {
+		wchar_t c = str[i];
+
 		if (in_percent) {
 			if (c == _('s')) {
 				count++;
@@ -228,11 +230,14 @@ void Locale::validate(Version ver) {
 	Packaged::validate(ver);
 	// load locale validator
 	LocaleValidator v;
-	{
-		InputStreamP stream = load_resource_text(_("expected_locale_keys"));
-		Reader reader(*stream, nullptr, _("expected_locale_keys"));
-		reader.handle_greedy(v);
-	}
+	basic_string<wchar_t> localeKeys = _("expected_locale_keys");
+	cout << "Locale: " << localeKeys << endl;
+	InputStreamP stream = load_resource_text(localeKeys);
+	cout << "Stream: " << stream << endl;
+	Reader reader(*stream, nullptr, localeKeys);
+	cout << "Done with a file!" << endl;
+	reader.handle_greedy(v);
+
 	// validate
 	String errors;
 	errors += translations[LOCALE_CAT_MENU   ].validate(_("menu"),    v.sublocales[_("menu")   ]);

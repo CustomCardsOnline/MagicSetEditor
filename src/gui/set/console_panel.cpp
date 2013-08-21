@@ -45,6 +45,15 @@ class ConsoleMessage : public IntrusivePtrBase<ConsoleMessage> {
 
 class MessageCtrl : public wxScrolledWindow {
   public:
+	static const int LIST_SPACING        = 1;
+	static const int ICON_PADDING        = 3;
+	static const int TEXT_PADDING_LEFT   = ICON_PADDING + 16 + 4;
+	static const int TEXT_PADDING_RIGHT  = 4;
+	static const int TEXT_PADDING_TOP    = 4;
+	static const int TEXT_PADDING_BOTTOM = 2;
+	static const int TEXT_LINE_SPACING   = 1;
+	static const int MIN_ITEM_HEIGHT     = 16 + 2 * ICON_PADDING;
+	
 	MessageCtrl(wxWindow* parent, int id)
 		: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME_FIX(wxBORDER_THEME))
 	{
@@ -272,19 +281,10 @@ class MessageCtrl : public wxScrolledWindow {
 		// height of bitmap
 		int bitmap_height = msg.bitmap.Ok() ? msg.bitmap.GetHeight() : 0;
 		
-		return max(MIN_ITEM_HEIGHT, TEXT_PADDING_TOP + TEXT_PADDING_BOTTOM + text_height + bitmap_height) + LIST_SPACING;
+		return max(16 + 2 * ICON_PADDING, TEXT_PADDING_TOP + TEXT_PADDING_BOTTOM + text_height + bitmap_height) + LIST_SPACING;
 	}
 	
 	// --------------------------------------------------- : Layout
-	
-	static const int LIST_SPACING        = 1;
-	static const int ICON_PADDING        = 3;
-	static const int TEXT_PADDING_LEFT   = ICON_PADDING + 16 + 4;
-	static const int TEXT_PADDING_RIGHT  = 4;
-	static const int TEXT_PADDING_TOP    = 4;
-	static const int TEXT_PADDING_BOTTOM = 2;
-	static const int TEXT_LINE_SPACING   = 1;
-	static const int MIN_ITEM_HEIGHT     = 16 + 2*ICON_PADDING;
 	
 	/// Layout all messages, starting from number start
 	/// layout = determine their height

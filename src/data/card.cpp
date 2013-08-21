@@ -18,6 +18,11 @@
 DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
 
+void intrusive_ptr_release(Card *something) {
+
+}
+
+
 // ----------------------------------------------------------------------------- : Card
 
 Card::Card()

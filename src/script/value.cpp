@@ -230,7 +230,8 @@ String quote_string(String const& str) {
 	String out;
 	out.reserve(str.size() + 2);
 	out += _('"');
-	FOR_EACH_CONST(c, str) {
+	for (int i = 0; i < str.length(); i++) {
+		wchar_t c = str[i];
 		if      (c == _('"') || c == _('\\')) { out += _('\\'); out += c; }
 		else if (c == _('\1')) out += _("\\<");
 		else if (c == _('\n')) out += _("\\n");
@@ -291,7 +292,9 @@ class ScriptString : public ScriptValue {
 	}
 	virtual wxDateTime toDateTime() const {
 		wxDateTime date;
-		if (!date.ParseDateTime(value.c_str())) {
+		wxString::const_iterator *end;
+		bool ret = date.ParseDateTime(value.c_str(), end);
+		if (!ret) {
 			throw ScriptErrorConversion(value, typeName(), _TYPE_("date"));
 		}
 		return date;

@@ -218,11 +218,11 @@ InputStreamP Package::openIn(const String& file) {
 		// a file in directory package
 		stream = shared(new BufferedFileInputStream(filename+_("/")+file));
 	} else if (wxFileExists(filename) && it != files.end() && it->second.zipEntry) {
-		// a file in a zip archive
-		// somebody in wx thought seeking was no longer needed, it now only works with the 'compatability constructor'
-		stream = shared(new wxZipInputStream(wxString(filename), it->second.zipEntry->GetInternalName()));
-		//stream = static_pointer_cast<wxZipInputStream>(
-		//			shared(new ZipFileInputStream(filename, it->second.zipEntry)));
+		wxFFileInputStream in(filename);
+		wxZipInputStream *zip = new wxZipInputStream(in);
+
+		zip->OpenEntry(*(it->second.zipEntry));
+		stream = shared((wxInputStream *)zip);
 	} else {
 		// shouldn't happen, packaged changed by someone else since opening it
 		throw FileNotFoundError(file, filename);

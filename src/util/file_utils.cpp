@@ -25,7 +25,8 @@ String normalize_filename(const String& name) {
 
 String normalize_internal_filename(const String& name) {
 	String ret;
-	FOR_EACH_CONST(c, name) {
+	for (int i = 0; i < name.length(); i++) {
+		wchar_t c = name[i];
 		if (c==_('\\')) ret += _('/');
 		else            ret += toLower(c);
 	}
@@ -54,7 +55,8 @@ String clean_filename(const String& name) {
 	String clean;
 	// allow only valid characters, and remove leading whitespace
 	bool start = true;
-	FOR_EACH_CONST(c, name) {
+	for (int i = 0; i < name.length(); i++) {
+		wchar_t c = name[i];
 		if (is_filename_char(c) && !(start && c == _(' '))) {
 			start = false;
 			clean += c;

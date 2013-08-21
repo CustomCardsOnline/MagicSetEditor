@@ -20,6 +20,10 @@ DECLARE_TYPEOF_COLLECTION(FieldP);
 
 IMPLEMENT_DYNAMIC_ARG(StyleSheet*, stylesheet_for_reading, nullptr);
 
+void intrusive_ptr_release(StyleSheet *something) {
+
+}
+
 StyleSheet::StyleSheet()
 	: card_width(100), card_height(100)
 	, card_dpi(96), card_background(*wxWHITE)

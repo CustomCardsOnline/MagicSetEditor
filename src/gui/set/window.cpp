@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <data/stylesheet.hpp>
 #include <util/prec.hpp>
 #include <gui/set/window.hpp>
 #include <gui/set/panel.hpp>

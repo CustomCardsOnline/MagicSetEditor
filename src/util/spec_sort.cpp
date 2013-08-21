@@ -118,9 +118,12 @@ void cycle_sort(const String& spec, String& input, String& ret) {
 	size_t size = spec.size();
 	vector<UInt> counts;
 	// count occurences of each char in spec
-	FOR_EACH_CONST(s, spec) {
+	for (int m = 0; m < spec.length(); m++) {
+		wchar_t s = spec[m];
 		UInt c = 0;
-		FOR_EACH(i, input) {
+
+		for (int n = 0; n < input.length(); n++) {
+			wchar_t i = input[n];
 			if (s == i) {
 				i = REMOVED; // remove
 				c++;
@@ -159,7 +162,8 @@ void cycle_sort(const String& spec, String& input, String& ret) {
 /// Sort a string, keeping the characters in the original order
 /** Removed used characters from input! */
 void mixed_sort(const String& spec, String& input, String& ret) {
-	FOR_EACH(c, input) {
+	for (int i = 0; i < input.length(); i++) {
+		wchar_t c = input[i];
 		if (spec.find(c) != String::npos) {
 			ret += c;
 			c = REMOVED;
@@ -223,7 +227,8 @@ void in_place_sort(const String& spec, String& input, String& ret) {
 	spec_sort(spec, input, result);
 	// restore into the same order as in 'input'
 	size_t pos_r = 0;
-	FOR_EACH(c, input) {
+	for (int i = 0; i < input.length(); i++) {
+		wchar_t c = input[i];
 		if (c == REMOVED) {
 			if (pos_r < result.size()) {
 				ret += result.GetChar(pos_r++);
@@ -241,7 +246,8 @@ String spec_sort(const String& spec, String& input, String& ret) {
 	SpecIterator it(spec);
 	while(it.nextUntil(0)) {
 		if (it.escaped) {					// single character, escaped
-			FOR_EACH(d, input) {
+			for (int i = 0; i < input.length(); i++) {
+				wchar_t d = input[i];
 				if (d == it.value) {
 					ret += d;
 					d = REMOVED;
@@ -297,7 +303,8 @@ String spec_sort(const String& spec, String& input, String& ret) {
 			in_place_sort(sub_spec, input, ret);
 		
 		} else if (it.keyword(_("any()"))) { // remaining input
-			FOR_EACH(d, input) {
+			for (int i = 0; i < input.length(); i++) {
+				wchar_t d = input[i];
 				if (d != REMOVED) {
 					ret += d;
 					d = REMOVED;
@@ -318,7 +325,8 @@ String spec_sort(const String& spec, String& input, String& ret) {
 		
 		} else if (it.keyword(_("ordered("))) { // in spec order
 			while (it.nextUntil(_(')'))) {
-				FOR_EACH(d, input) {
+				for (int i = 0; i < input.length(); i++) {
+					wchar_t d = input[i];
 					if (d == it.value) {
 						ret += d;
 						d = REMOVED;
@@ -326,7 +334,8 @@ String spec_sort(const String& spec, String& input, String& ret) {
 				}
 			}
 		} else {					// single char
-			FOR_EACH(d, input) {
+			for (int i = 0; i < input.length(); i++) {
+				wchar_t d = input[i];
 				if (d == it.value) {
 					ret += d;
 					d = REMOVED;

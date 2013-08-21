@@ -98,11 +98,11 @@ void Reader::moveNext() {
 	key.clear();
 	indent = -1; // if no line is read it never has the expected indentation
 	// repeat until we have a good line
-	while (key.empty() && !input.Eof()) {
+	while (key.empty() && input.LastRead() != 0) {
 		readLine();
 	}
 	// did we reach the end of the file?
-	if (key.empty() && input.Eof()) {
+	if (key.empty() && input.LastRead() != 0) {
 		line_number += 1;
 		indent = -1;
 	}
@@ -146,13 +146,22 @@ template <typename T> class LocalVector {
 String read_utf8_line(wxInputStream& input, bool eat_bom = true, bool until_eof = false);
 String read_utf8_line(wxInputStream& input, bool eat_bom, bool until_eof) {
 	LocalVector<char> buffer;
+	if (!input.CanRead()) return _("");
+	int i = 0;
 	while (!input.Eof()) {
-		Byte c = input.GetC(); if (input.LastRead() <= 0) break;
+		i++;
+		cout << "A (" << i << ")" << endl;
+		Byte c = input.Peek();
+		if (input.LastRead() <= 0) break;
+		cout << "Byte: " << c << endl;
+		c = input.GetC();
+		if (input.LastRead() <= 0) break;
 		if (!until_eof) {
 			if (c == '\n') break;
 			if (c == '\r') {
 				if (input.Eof()) break;
-				c = input.GetC(); if (input.LastRead() <= 0) break;
+				c = input.GetC();
+				if (input.LastRead() <= 0) break;
 				if (c != '\n') {
 					input.Ungetch(c); // \r but not \r\n
 				}
@@ -220,6 +229,9 @@ void Reader::readLine(bool in_string) {
 	} catch (const ParseError& e) {
 		throw ParseError(e.what() + String(_(" on line ")) << line_number);
 	}
+
+	cout << "Line: " << line << endl;
+
 	// pragma handler
 	if (reader_pragma_handler()) reader_pragma_handler()(line);
 	// read indentation

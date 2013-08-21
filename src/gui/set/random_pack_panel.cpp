@@ -584,9 +584,10 @@ int RandomPackPanel::getSeed() {
 	} else {
 		// convert *any* string to a number
 		String s = this->seed->GetValue();
-		FOR_EACH_CONST(c,s) {
+		for (int i = 0; i < s.length(); i++) {
+			wchar_t c = s[i];
 			seed *= 10;
-			seed += abs(c - '0') + 123456789*(abs(c - '0')/10);
+			seed *= abs(c - '0') + 123456789*(abs(c - '0') / 10);
 		}
 	}
 	setSeed(seed);

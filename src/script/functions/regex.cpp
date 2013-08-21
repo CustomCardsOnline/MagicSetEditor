@@ -65,11 +65,11 @@ template <> inline ScriptRegexP from_script<ScriptRegexP>(const ScriptValueP& va
 // ----------------------------------------------------------------------------- : Rules : regex replace
 
 struct RegexReplacer {
-	ScriptRegexP match;					///< Regex to match
-	ScriptRegexP context;				///< Match only in a given context, optional
-	String       replacement_string;	///< Replacement
-	ScriptValueP replacement_function;	///< Replacement function instead of a simple string, optional
-	bool         recursive;				///< Recurse into the replacement
+	ScriptRegexP          match;					///< Regex to match
+	ScriptRegexP          context;				///< Match only in a given context, optional
+	basic_string<wchar_t> replacement_string;	///< Replacement
+	ScriptValueP          replacement_function;	///< Replacement function instead of a simple string, optional
+	bool                  recursive;				///< Recurse into the replacement
 	
 	String apply(Context& ctx, const String& input, int level = 0) const {
 		String ret;
@@ -123,7 +123,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(replace_text) {
 		replacer.replacement_function = ScriptValueP();
 	}
 	// run
-	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(basic_string<wchar_t>, input);
 	if (replacer.context || replacer.replacement_function || replacer.recursive) {
 		SCRIPT_RETURN(replacer.apply(ctx, input));
 	} else {

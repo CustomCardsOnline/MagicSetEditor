@@ -223,18 +223,20 @@ String MtgEditorFileFormat::filter1(const String& str) {
 		after  = str.substr(pos + 1);
 	}
 	// filter
-	FOR_EACH(c, after) {
+	for (int i = 0; i < after.length(); i++) {
+		wchar_t c = after[i];
 		if (isAlnum(c)) ret += c;
-		else            ret += _('_');
+		else ret += _('_');
 	}
 	return before + ret;
 }
 
 String MtgEditorFileFormat::filter2(const String& str) {
 	String ret;
-	FOR_EACH_CONST(c, str) {
-		if (isAlnum(c))                  ret += c;
-		else if (c==_(' ') || c==_('-')) ret += _('_');
+	for (int i = 0; i < str.length(); i++) {
+		wchar_t c = str[i];
+		if (isAlnum(c)) ret += c;
+		else if (c == _(' ') || c == _('-')) ret += _('_');
 	}
 	return ret;
 }

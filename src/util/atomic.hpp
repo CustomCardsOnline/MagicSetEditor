@@ -83,34 +83,27 @@
 #else
 	
 	/// An integer which is equivalent to an AtomicInt, but which doesn't support attomic operations
-	typedef long AtomicIntEquiv;
+	typedef unsigned int AtomicIntEquiv;
 	
 	/// An integer that can be incremented and decremented atomicly
 	class AtomicInt {
 	  public:
 		AtomicInt(AtomicIntEquiv v) : v(v) {}
-		AtomicInt(const AtomicInt& i) {
-			wxCriticalSectionLocker lock(i.cs);
-			v = i.v;
-		}
 		inline operator AtomicIntEquiv() const {
 			return v;
 		}
-		/// Attomicly increments this AtomicInt, returns the new value
-		inline AtomicIntEquiv operator ++ () {
-			wxCriticalSectionLocker lock(cs);
-			return ++v;
+		inline AtomicInt operator ++ () {
+			return __sync_add_and_fetch(&v,1);
 		}
-		/// Attomicly decrements this AtomicInt, returns the new value
-		inline AtomicIntEquiv operator -- () {
-			wxCriticalSectionLocker lock(cs);
-			return --v;
+		inline AtomicInt operator -- () {
+			return __sync_sub_and_fetch(&v,1);
 		}
 	  private:
-		AtomicIntEquiv            v;  ///< The value
-		mutable wxCriticalSection cs; ///< Critical section protecting v
+		AtomicIntEquiv v;
 	};
 	
+	/// We have a fast AtomicInt
+	#define HAVE_FAST_ATOMIC	
 #endif
 
 // ----------------------------------------------------------------------------- : EOF

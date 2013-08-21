@@ -163,7 +163,8 @@ class TagStack {
 // html-escape a string
 String html_escape(const String& str) {
 	String ret;
-	FOR_EACH_CONST(c, str) {
+	for (int i = 0; i < str.length(); i++) {
+		wchar_t c = str[i];
 		if (c == _('\1') || c == _('<')) { // escape <
 			ret += _("&lt;");
 		} else if (c == _('>')) {  // escape >

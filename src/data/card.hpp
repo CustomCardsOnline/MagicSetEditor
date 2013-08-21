@@ -24,6 +24,8 @@ DECLARE_POINTER_TYPE(StyleSheet);
 
 // ----------------------------------------------------------------------------- : Card
 
+void intrusive_ptr_release(Card *something);
+
 /// A card from a card Set
 class Card : public IntrusivePtrVirtualBase {
   public:

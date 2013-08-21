@@ -17,6 +17,7 @@
 #include <data/game.hpp>
 #include <data/card.hpp>
 #include <util/error.hpp>
+#include <data/stylesheet.hpp>
 
 // ----------------------------------------------------------------------------- : new_card
 
