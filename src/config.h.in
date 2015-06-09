@@ -6,6 +6,9 @@
 /* define if the Boost::Regex library is available */
 #undef HAVE_BOOST_REGEX
 
+/* define if the Boost::System library is available */
+#undef HAVE_BOOST_SYSTEM
+
 /* Define to 1 if you have the `floor' function. */
 #undef HAVE_FLOOR
 
@@ -14,9 +17,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the `hunspell' library (-lhunspell). */
-#undef HAVE_LIBHUNSPELL
 
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
