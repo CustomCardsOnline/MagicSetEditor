@@ -24,8 +24,8 @@ AM_LDFLAGS  = $(BOOST_LDFLAGS)
 .gch.o:
 	gcc -x c - -c -o $@ <<<""
 
-magicseteditor_LDADD = @WX_LIBS@ $(BOOST_REGEX_LIB)
-magicseteditor_CXXFLAGS = $(AM_CXXFLAGS)
+magicseteditor_LDADD = @WX_LIBS@ $(BOOST_REGEX_LIB) $(BOOST_SYSTEM_LIB) $(HUNSPELL_LIBS)
+magicseteditor_CXXFLAGS = $(AM_CXXFLAGS) $(HUNSPELL_CFLAGS)
 magicseteditor_SOURCES = 
 
 if GLIBCPP_BUILD_PCH

@@ -33,11 +33,13 @@ if test X$user_set_cxxflags != Xyes; then
 fi
 
 # Checks for libraries.
-AC_CHECK_LIB([hunspell],[Hunspell_create])
+# AC_CHECK_LIB([hunspell],[Hunspell_create])
+PKG_CHECK_MODULES([HUNSPELL], [hunspell])
 
 # Check for Boost
 AX_BOOST_BASE([1.37.0])
 AX_BOOST_REGEX
+AX_BOOST_SYSTEM
 
 # Check for wxWidgets
 AM_OPTIONS_WXCONFIG
