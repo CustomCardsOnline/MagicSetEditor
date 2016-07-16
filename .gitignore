@@ -1,1 +1,23 @@
 build
+
+# Pre-build intermediates
+aclocal.m4
+autom4te.cache/
+configure
+config.guess
+config.log
+config.status
+config.sub
+config.h
+compile
+Makefile
+
+# Build intermediates
+*.o
+
+.deps/
+*.dirstamp
+stamp-h1
+
+# build outputs
+magicseteditor
